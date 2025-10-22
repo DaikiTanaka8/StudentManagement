@@ -1,9 +1,7 @@
 package raisetech.StudentManagement;
 
-import ch.qos.logback.core.util.StringUtil;
-import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,14 +18,14 @@ public class StudentManagementApplication {
   private String name = "Daiki Tanaka";
   private String age = "31";
 
-  private Map<String, String>studentMap = new HashMap<>();
+  private Map<String, String>studentMap = new ConcurrentHashMap<>();
 
 
 	public static void main(String[] args) {
 		SpringApplication.run(StudentManagementApplication.class, args);
 	}
   @PostMapping("/studentMap")
-  public void addStudentMap(String nameMap, String ageMap){
+  public void addStudentMap(@RequestParam String nameMap,@RequestParam String ageMap){
     studentMap.put(nameMap, ageMap);
   }
 
