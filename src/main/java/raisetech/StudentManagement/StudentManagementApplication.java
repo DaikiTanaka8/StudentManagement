@@ -53,13 +53,13 @@ public class StudentManagementApplication {
   }
 
   @PostMapping("/studentInfo")
-  public void setStudentInfo(String name, String age){
+  public void setStudentInfo(@RequestParam String name,@RequestParam String age){
     this.name = name;
     this.age = age;
   }
 
   @PostMapping("/studentName")
-  public void updateStudentName(String name){
+  public void updateStudentName(@RequestParam String name){
     this.name = name;
   }
 
