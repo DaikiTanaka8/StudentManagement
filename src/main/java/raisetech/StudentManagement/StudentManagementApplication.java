@@ -43,12 +43,12 @@ public class StudentManagementApplication {
   }
 
   @PatchMapping("/student")
-  public void updateStudentName(String name, int age){
+  public void updateStudentName(@RequestParam String name,@RequestParam int age){
     repository.updateStudent(name, age);
   }
 
   @DeleteMapping("/student")
-  public void deleteStudent(String name){
+  public void deleteStudent(@RequestParam String name){
     repository.deleteStudent(name);
   }
 
