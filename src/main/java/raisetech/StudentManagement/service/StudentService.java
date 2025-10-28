@@ -39,7 +39,7 @@ public class StudentService {
     List<StudentCourse> courses = repository.searchStudentCourses();
 
     List<StudentCourse> javaCourse = courses.stream()
-        .filter(course -> course.getCourseName().equals("Java基礎"))
+        .filter(course -> "Java基礎".equals(course.getCourseName()))
         .collect(Collectors.toList());
 
     return javaCourse;

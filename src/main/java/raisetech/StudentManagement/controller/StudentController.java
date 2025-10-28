@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.conttoller;
+package raisetech.StudentManagement.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
