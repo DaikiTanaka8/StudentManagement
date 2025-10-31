@@ -1,8 +1,6 @@
 package raisetech.studentmanagement.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +27,7 @@ public class StudentController {
     List<Student> students = service.searchStudentList();
     List<StudentCourse> studentCourses = service.searchStudentCourseList();
 
-    return converter.conertStudentDtails(students, studentCourses);
+    return converter.convertStudentDetails(students, studentCourses);
   }
 
   @GetMapping("/studentCourseList")
