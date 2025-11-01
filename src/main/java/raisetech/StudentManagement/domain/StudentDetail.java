@@ -1,10 +1,10 @@
-package raisetech.StudentManagement.domain;
+package raisetech.studentmanagement.domain;
 
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentCourse;
+import raisetech.studentmanagement.data.Student;
+import raisetech.studentmanagement.data.StudentCourse;
 
 @Getter
 @Setter
