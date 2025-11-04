@@ -17,9 +17,16 @@ public interface StudentRepository {
   @Select("SELECT * FROM students_courses")
   List<StudentCourse> searchStudentCourses();
 
+  // ここでDISTINCT（重複除去して取得）を使って重複せずにコース一覧を取得する
+  @Select("SELECT DISTINCT course_id, course_name FROM students_courses")
+  List<StudentCourse> getDistinctCourses();
+
   @Insert(
       "INSERT INTO students(student_id,name, furigana, nickname, email, city, age, gender, remark)"
           + "VALUES(#{studentId}, #{name}, #{furigana}, #{nickname}, #{email}, #{city}, #{age}, #{gender}, #{remark})")
   void insertStudent(Student student);
+
+  //@Insert()
+  //void insertStudentCourse(StudentCourse studentCourse);
 
 }

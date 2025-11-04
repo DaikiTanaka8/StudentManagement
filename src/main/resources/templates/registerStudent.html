@@ -63,6 +63,20 @@
     <label for="remark">備考</label>
     <input type="text" id="remark" th:field="*{student.remark}">
   </div>
+
+  <!-- 以下はコース情報の登録 -->
+  <div>
+    <label for="course_id">受講するコース</label>
+    <select id="course_id" th:field="*{selectedCourseId}">
+      <option th:each="course : ${courseList}"
+              th:value="${course.courseId}"
+              th:text="${course.courseName}">
+      </option>
+    </select>
+  </div>
+
+
+
   <div>
     <button type="submit">登録</button>
   </div>

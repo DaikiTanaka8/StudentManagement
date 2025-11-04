@@ -28,6 +28,11 @@ public class StudentService {
     return repository.searchStudentCourses();
   }
 
+  // ここでService層でDistinct（重複しない）コースリストを取得する。
+  public List<StudentCourse> getDistinctCourses(){
+    return repository.getDistinctCourses();
+  }
+
   @Transactional
   public void registerStudent(StudentDetail studentDetail) {
     // IDを設定
@@ -36,7 +41,7 @@ public class StudentService {
     repository.insertStudent(studentDetail.getStudent());
 
     // ここでコース情報の登録処理も行う予定
-
+    //repository.insertStudentCourse(studentDetail.getStudentCourse());
 
   }
 }

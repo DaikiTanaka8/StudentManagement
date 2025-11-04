@@ -45,6 +45,10 @@ public class StudentController {
   @GetMapping("/newStudent")
   public String newStudent(Model model) {
     model.addAttribute("studentDetail", new StudentDetail());
+
+    // ここにDistinctのコース一覧も追加する。このGetのところに入れるのね。
+    List<StudentCourse> courseList = service.getDistinctCourses();
+    model.addAttribute("courseList", courseList);
     return "registerStudent";
   }
 
@@ -58,7 +62,9 @@ public class StudentController {
     service.registerStudent(studentDetail);
 
     // コース情報も一緒に登録できるように実装する。コースは単体でいい。
-    return "redirect:/studentList";
-  }
+    //service.registerStudentCourse(studentDetail);
 
-}
+      return "redirect:/studentList";
+    }
+
+  }
