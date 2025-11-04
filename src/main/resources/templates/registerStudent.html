@@ -9,35 +9,59 @@
 <form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
   <div>
     <label for="name">名前</label>
-    <input type="text" id="name" th:field="*{student.name}" required />
+    <input type="text" id="name" th:field="*{student.name}"
+           required oninvalid="this.setCustomValidity('名前を入力してください')"
+           oninput="this.setCustomValidity('')">
+    <p th:if="${#fields.hasErrors('student.name')}" th:errors="*{student.name}"></p>
   </div>
   <div>
     <label for="furigana">ふりがな</label>
-    <input type="text" id="furigana" th:field="*{student.furigana}" required />
+    <input type="text" id="furigana" th:field="*{student.furigana}"
+           required oninvalid="this.setCustomValidity('ふりがなを入力してください')"
+           oninput="this.setCustomValidity('')">
+    <p th:if="${#fields.hasErrors('student.furigana')}" th:errors="*{student.furigana}"></p>
   </div>
   <div>
     <label for="nickname">ニックネーム</label>
-    <input type="text" id="nickname" th:field="*{student.nickname}" required />
+    <input type="text" id="nickname" th:field="*{student.nickname}">
   </div>
   <div>
     <label for="email">メールアドレス</label>
-    <input type="text" id="email" th:field="*{student.email}" required />
+    <input type="text" id="email" th:field="*{student.email}"
+           required oninvalid="this.setCustomValidity('メールアドレスを入力してください')"
+           oninput="this.setCustomValidity('')">
+    <p th:if="${#fields.hasErrors('student.email')}" th:errors="*{student.email}"></p>
   </div>
   <div>
     <label for="city">地域</label>
-    <input type="text" id="city" th:field="*{student.city}" required />
+    <input type="text" id="city" th:field="*{student.city}"
+           required oninvalid="this.setCustomValidity('地域を入力してください')"
+           oninput="this.setCustomValidity('')">
+    <p th:if="${#fields.hasErrors('student.city')}" th:errors="*{student.city}"></p>
   </div>
   <div>
     <label for="age">年齢</label>
-    <input type="number" id="age" th:field="*{student.age}" required />
+    <input type="number" id="age" th:field="*{student.age}"
+           required oninvalid="this.setCustomValidity('年齢を入力してください')"
+           oninput="this.setCustomValidity('')">
+    <p th:if="${#fields.hasErrors('student.age')}" th:errors="*{student.age}"></p>
   </div>
   <div>
     <label for="gender">性別</label>
-    <input type="text" id="gender" th:field="*{student.gender}" required />
+    <select id="gender" th:field="*{student.gender}"
+            required oninvalid="this.setCustomValidity('性別を選択してください')"
+            oninput="this.setCustomValidity('')">
+      <option value="">選択してください</option>
+      <option value="MALE">男性</option>
+      <option value="FEMALE">女性</option>
+      <option value="OTHER">その他</option>
+    </select>
+
+    <p th:if="${#fields.hasErrors('student.gender')}" th:errors="*{student.gender}"></p>
   </div>
   <div>
     <label for="remark">備考</label>
-    <input type="text" id="remark" th:field="*{student.remark}" required />
+    <input type="text" id="remark" th:field="*{student.remark}">
   </div>
   <div>
     <button type="submit">登録</button>

@@ -17,8 +17,9 @@ public interface StudentRepository {
   @Select("SELECT * FROM students_courses")
   List<StudentCourse> searchStudentCourses();
 
-@Insert("INSERT INTO students(student_id,name, furigana, nickname, email, city, age, gender, remark)"
-    + "VALUES(#{studentId}, #{name}, #{furigana}, #{nickname}, #{email}, #{city}, #{age}, #{gender}, #{remark})")
+  @Insert(
+      "INSERT INTO students(student_id,name, furigana, nickname, email, city, age, gender, remark)"
+          + "VALUES(#{studentId}, #{name}, #{furigana}, #{nickname}, #{email}, #{city}, #{age}, #{gender}, #{remark})")
   void insertStudent(Student student);
 
 }
