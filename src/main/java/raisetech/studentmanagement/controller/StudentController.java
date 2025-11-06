@@ -45,20 +45,26 @@ public class StudentController {
   @GetMapping("/newStudent")
   public String newStudent(Model model) {
     model.addAttribute("studentDetail", new StudentDetail());
+
+    // ここにDistinctのコース一覧も追加する。このGetのところに入れるのね。
+    model.addAttribute("courseList", service.getDistinctCourses());
     return "registerStudent";
   }
 
   @PostMapping("/registerStudent")
   public String registerStudent(@Valid @ModelAttribute StudentDetail studentDetail,
-      BindingResult result) {
+      BindingResult result, Model model) {
     if (result.hasErrors()) {
+      model.addAttribute("courseList", service.getDistinctCourses());
       return "registerStudent";
     }
     // 新規受講生情報を登録する処理を実装する。
     service.registerStudent(studentDetail);
 
     // コース情報も一緒に登録できるように実装する。コースは単体でいい。
-    return "redirect:/studentList";
-  }
+    //service.registerStudentCourse(studentDetail);
 
-}
+      return "redirect:/studentList";
+    }
+
+  }

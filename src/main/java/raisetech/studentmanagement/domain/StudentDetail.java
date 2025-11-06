@@ -13,5 +13,6 @@ public class StudentDetail {
 
   private @Valid Student student;
   private List<StudentCourse> studentCourse;
+  private  String selectedCourseId;
 
 }
