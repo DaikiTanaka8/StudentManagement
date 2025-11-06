@@ -40,7 +40,12 @@ public class StudentService {
     // ここで実際の登録処理
     repository.insertStudent(studentDetail.getStudent());
 
-    // ここでコース情報の登録処理も行う予定
+
+    // courseIDからcourseNameを取得
+    String courseId = studentDetail.getSelectedCourseId();
+    StudentCourse course = repository.findByCourseId(courseId);
+
+    // ここでコース情報の登録処理も行う予定(StudentCourse登録)
     //repository.insertStudentCourse(studentDetail.getStudentCourse());
 
   }

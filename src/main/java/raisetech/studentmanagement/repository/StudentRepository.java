@@ -1,5 +1,6 @@
 package raisetech.studentmanagement.repository;
 
+import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -26,7 +27,9 @@ public interface StudentRepository {
           + "VALUES(#{studentId}, #{name}, #{furigana}, #{nickname}, #{email}, #{city}, #{age}, #{gender}, #{remark})")
   void insertStudent(Student student);
 
-  //@Insert()
-  //void insertStudentCourse(StudentCourse studentCourse);
+  // ここで中間テーブルへの挿入メソッド
+  @Insert("INSERT INTO students_courses(course_id, student_id, course_name, start_date, end_date)"
+      + "VALUES(#{courseId}, #{studentId}, #{courseName}, #{startDate}, #{endDate})")
+  void insertStudentCourse(StudentCourse studentCourse);
 
 }
