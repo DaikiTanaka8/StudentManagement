@@ -10,33 +10,51 @@ import raisetech.studentmanagement.data.StudentCourse;
 import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.repository.StudentRepository;
 
-@Service
+/**
+ * 業務処理：コントローラーがリクエストを受け取る→☆サービスは具体的な処理を行う。→DBで呼び出す。
+ * ・今はまだ複雑な処理をしたいわけではない。リポジトリを呼び出して、検索した結果を返したい。
+ */
+@Service // これをつけることでSpringが認識してくれる。
 public class StudentService {
 
   private StudentRepository repository;
 
-  @Autowired
-  public StudentService(StudentRepository repository) {
-    this.repository = repository;
+  @Autowired // Springが管理しているインスタンスやクラスを自動で管理してくれる。自動でインスタンス生成したり→自分でnewしなくて済むからコードがキレイ。コンストラクタインジェクション。
+  public StudentService(StudentRepository repository) { // 上で書いた「private StudentRepository repository;」を呼び出すためにコンストラクターを生成している。インスタンス化する直前で書いている。
+    this.repository = repository;      // ↑この引数は誰がどうやって持たせる？→newしてないのに使えているのは、SpringBootが自動で生成している。
   }
 
+  /**
+   * 受講生を検索する。サービスとしては検索をする→search
+   * @return 全件検索した受講生情報一覧
+   */
   public List<Student> searchStudentList() {
     return repository.searchStudents();
   }
 
+  /**
+   * 受講生コース情報を検索する。サービスとしては検索をする→search
+   * @return 全件検索した受講生コース情報の一覧
+   */
   public List<StudentCourse> searchStudentCourseList() {
     return repository.searchStudentCourses();
   }
 
-  @Transactional
+  /**
+   * 受講生情報を登録するメソッド。
+   * @param studentDetail StudentとStudentListの情報をまとめたクラス。
+   */
+  @Transactional // サービスで登録したり更新をしたり削除したりする時に必ずつける！！
+                 // トランザクション管理、途中でエラーになったら登録内容を戻す。サービスに入れる。（片方登録されてもう片方は登録されない、というのを防ぐ。）
   public void registerStudent(StudentDetail studentDetail) {
     // IDを設定
     studentDetail.getStudent().setStudentId(UUID.randomUUID().toString());
     // ここで実際の登録処理
-    repository.insertStudent(studentDetail.getStudent());
+    repository.registerStudent(studentDetail.getStudent()); // repositoryを呼び分ける。
 
-    // ここでコース情報の登録処理も行う予定
-
+    // studentDetail.getStudent().getStudentId(); // ここに値が入っているはず？？
+    // TODO:ここでコース情報登録も行う。　まとめて書ける。(TODOって書くと色が変わるメモ！)
+    // repository.registerStudentCourses(); // ←仮で書いた。
 
   }
 }

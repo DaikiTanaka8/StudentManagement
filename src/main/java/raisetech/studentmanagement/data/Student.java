@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
+@Setter //LombokでGetterやSetterをコンパイル時に自動で使ってくれる。→「どんなフィールドを持っているのか」に集中できる。
 public class Student {
 
   private String studentId;
@@ -33,6 +33,7 @@ public class Student {
 
   @NotBlank(message = "性別を入力してください")
   private String gender;
+
   private String remark;
   private boolean isDeleted;
 }
