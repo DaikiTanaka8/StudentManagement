@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<!--「xmlns:th="http://www.thymeleaf.org"」→thがタイムリーフ専用のタグ、必須のもの。
+     これを宣言しているから、「th:」で始まる属性はタイムリーフのものとして使える。-->
 <head>
   <meta charset="UTF-8">
   <title>受講生一覧</title>
@@ -13,10 +15,10 @@
   </style>
 </head>
 <body>
-<h1>受講生一覧</h1>
-<table>
-  <thead>
-  <tr>
+<h1>受講生一覧</h1> <!--"h1"という大きい見出しのタグ-->
+<table>　<!--テーブル（表）レイアウト-->
+  <thead> <!--"header"項目名ということ-->
+  <tr> <!--trが横一行ということ。一行一行。-->
     <th>ID</th>
     <th>名前</th>
     <th>カナ名</th>
@@ -29,9 +31,15 @@
   </tr>
   </thead>
   <tbody>
-  <tr th:each="studentDetail : ${studentList}">
-    <td th:text="${studentDetail.student.studentId}">1</td>
+  <tr th:each="studentDetail : ${studentList}">。
+  <!--"th:each"がオリジナル。繰り返しという意味。studentDetailをぐるぐる回す。
+      "${studentList}"この変数でリストが返ってくる。Listの数だけ行を作ります、ということ。-->
+    <td th:text="${studentDetail.student.studentId}">1</td> <!--tdが列という意味。 -->
+    <!--studentDetailのstudentのidをとってきている。
+        "th:text"は、テキスト情報を表示する、ということ。-->
     <td th:text="${studentDetail.student.name}">山田太郎</td>
+    <!--「山田太郎」とかは適当に入れているだけ。thが認識できなかった場合、山田太郎とかが表示されて確認される。
+        テンプレートエンジンは、動作確認するためにテストを入れている、ということ。-->
     <td th:text="${studentDetail.student.furigana}">ヤマダタロウ</td>
     <td th:text="${studentDetail.student.nickname}">タロー</td>
     <td th:text="${studentDetail.student.email}">taro@example.com</td>

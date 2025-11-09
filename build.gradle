@@ -30,7 +30,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     // バリデーションライブラリ
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    // Thymeleaf
+    // Thymeleaf　現在はあまり使われていない（から極めてほしいというわけではない）。タイプスクリプトとかリアクトとかJavaScriptがメジャー。
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     // Apache Commons Lang 便利機能、ユーティリティ
     implementation("org.apache.commons:commons-lang3:3.17.0")
