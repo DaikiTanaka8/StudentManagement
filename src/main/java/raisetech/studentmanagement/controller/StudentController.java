@@ -1,12 +1,12 @@
 package raisetech.studentmanagement.controller;
 
 import jakarta.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,7 +69,9 @@ public class StudentController {
    */
   @GetMapping("/newStudent") //「newStudent」にくると、一旦は「registerStudent.html」にくるよ、ということ。
   public String newStudent(Model model) {
-    model.addAttribute("studentDetail", new StudentDetail()); // 表示する時にもstudentDetailを使う。new StudentDetailで中身空っぽのものを入れておく。
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail.setStudentCourse(Arrays.asList(new StudentCourse())); // ここでStudentCourseのリストを入れておかないと、受講生コース一覧が登録画面に表示されない。
+    model.addAttribute("studentDetail", studentDetail); // 表示する時にもstudentDetailを使う。new StudentDetailで中身空っぽのものを入れておく。
     return "registerStudent";
   }
 
