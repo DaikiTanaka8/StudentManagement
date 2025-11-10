@@ -77,6 +77,15 @@
     <label for="remark">備考</label>
     <input type="text" id="remark" th:field="*{student.remark}">
   </div>
+
+  <div th:each="course, stat : *{studentCourse}"> <!--stat:タイムリーフの機能。Listだと数を数えてもらう（０始まりで数える）。studentCourseはStudentDetailがもつ要素のこと。 -->
+    <label for="courseName">受講コース名</label>
+    <input type="text" id="courseName"
+           th:field="*{studentCourse[__${stat.index}__].courseName}" /> <!--studentCourseのcourseNameに設定するよ、ということ。-->
+                  <!-- ↑StudentDetailの中のリスト/ ↑n番目 / ↑要素オブジェクトのcourseNameフィールド -->
+    <!--「th:id="studentCourse.__${stat.index}__.courseName}"」講義内ではこれを入れて、idを上書きしている。labelの方もこれを入れている。 -->
+  </div>
+
   <div>
     <button type="submit">登録</button>
     <!--登録するためのボタンを用意している。「type="submit"」：ボタンを押した瞬間、postとしてURLに対して処理が実行されるという動き。    -->

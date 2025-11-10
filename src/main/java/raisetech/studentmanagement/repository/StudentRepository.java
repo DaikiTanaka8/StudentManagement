@@ -4,7 +4,6 @@ package raisetech.studentmanagement.repository;
 import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
@@ -37,10 +36,11 @@ public interface StudentRepository {
   void registerStudent(Student student); // INSERTだから登録した後何も返さないのでvoid。
   // IDの管理は自分でしたくない。自動採番にして生成したりUUIDにしたり。MAXに＋１するのはOK。（ちなみに講義内ではAUTO_INCREMENTで自動連番にしている。）
   // keyPropertyで設定したやつを自動採番したやつを受け取れる？？
-}
 
-// "SELECT * FROM student WHERE name = #{name}"
-// Student searchByName(String name);
-// ・「#{name}」は「String name」のname。#{}で書かれた中身は引数で設定されたものを自動的に入れてくれる。
-// ・#{ } は MyBatisのプレースホルダー（バインド変数）。
-// ・SQL の中に Java の値（メソッドの引数やオブジェクトのプロパティ）を安全に埋め込む仕組み 。
+  @Insert(
+      "INSERT INTO students_courses(course_id, student_id, course_name, start_date, end_date) " +
+          "VALUES(#{courseId}, #{studentId}, #{courseName}, #{startDate}, #{endDate})")
+      // ここの中身はデータベースのフィールド名と一致するように。
+  void registerStudentCourse(StudentCourse studentCourse); //
+
+}
