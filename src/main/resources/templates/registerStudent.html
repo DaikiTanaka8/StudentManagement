@@ -8,6 +8,7 @@
 </head>
 <body>
 <h1>受講生登録</h1>
+<!--TODO：actionの参照先やobjectの型が合っているか確認-->
 <form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
 <!--「th:action="@{/registerStudent}"」：アクションのURLは表示する時のものではなく、POSTメソッドのURL。
     コントローラーの「@PostMapping("/registerStudent")」に飛ばしている。

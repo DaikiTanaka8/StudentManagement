@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import raisetech.studentmanagement.controller.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
@@ -23,13 +24,15 @@ public class StudentController {
   private StudentConverter converter; // ②プライベートでコンバーターを作る。
 
   @Autowired // オートワイヤードで自動で管理。コンストラクタインジェクション。
-  public StudentController(StudentService service, StudentConverter converter) { // ①serviceに加えてconverterも使うので、引数にconverterを追加している。
+  public StudentController(StudentService service,
+      StudentConverter converter) { // ①serviceに加えてconverterも使うので、引数にconverterを追加している。
     this.service = service; // コンストラクターを生成。フィールドを持ったやつを作る。
     this.converter = converter; // ③ここでコンストラクターを生成。
   }
 
   /**
    * 受講生情報一覧。ユーザーからすると「ほしい」だからgetにしている。
+   *
    * @param model 受講生リスト.htmlとコントローラーの間にいるやつ
    * @return コンバートした受講生情報→受講生とその受講生が受講している受講生コース情報の一覧
    */
@@ -50,11 +53,12 @@ public class StudentController {
      */
 
     return "studentList"; // テンプレートエンジンの名前「ファイル名」を返す。「studentList.html」とつけているので、「studentList」としている。
-                          // →attributeNameや${}の中身と合わせているわけではない。
+    // →attributeNameや${}の中身と合わせているわけではない。
   }
 
   /**
    * 受講生コース情報一覧。ユーザーからすると「ほしい」だからgetにしている。
+   *
    * @return 全件検索した受講生コース情報の一覧。
    */
   @GetMapping("/studentCourseList")
@@ -63,24 +67,44 @@ public class StudentController {
   }
 
   /**
+   * IDで検索した単一の受講生情報。
+   */
+  @GetMapping("/updateStudent")
+  public String getStudentById(@RequestParam String studentId, Model model) {
+    model.addAttribute("searchStudent", service.searchStudentById(studentId));
+    /*
+     ・model.addAttributeで"searchStudent"の名前をつける。
+     ・"searchStudent"の名前は、HTML（updateStudent.html）の${searchStudent}の中のものと一致させる。
+     ・searchStudentの中身はこれだよ、という必要がある。→「service.searchStudentById(studentId)」。
+     ・「service.searchStudentById(studentId)」は何を返しているのかというと…
+     　→「public Student searchStudentById(String studentId) {return repository.searchStudentById(studentId);}」すなわちStudentオブジェクトを返している。
+     */
+    return "updateStudent"; // テンプレートエンジンの名前「ファイル名」を返す。「updateStudent.html」とつけているので、「updateStudent」としている。と思う。
+    // →attributeNameや${}の中身と合わせているわけではない。
+  }
+
+  /**
    * まず一番始めにGetする必要がある。Getして画面表示するだけ。画面表示した後に更新する。更新する場合はまた別の処理。
+   *
    * @param model これちょっと分からないかも。
    * @return 「registerStudent」を返している。一旦は「registerStudent.html」にくるよ、ということ。
    */
   @GetMapping("/newStudent") //「newStudent」にくると、一旦は「registerStudent.html」にくるよ、ということ。
   public String newStudent(Model model) {
     StudentDetail studentDetail = new StudentDetail();
-    studentDetail.setStudentCourse(Arrays.asList(new StudentCourse())); // ここでStudentCourseのリストを入れておかないと、受講生コース一覧が登録画面に表示されない。
-    model.addAttribute("studentDetail", studentDetail); // 表示する時にもstudentDetailを使う。new StudentDetailで中身空っぽのものを入れておく。
+    studentDetail.setStudentCourse(
+        Arrays.asList(new StudentCourse())); // ここでStudentCourseのリストを入れておかないと、受講生コース一覧が登録画面に表示されない。
+    model.addAttribute("studentDetail",
+        studentDetail); // 表示する時にもstudentDetailを使う。new StudentDetailで中身空っぽのものを入れておく。
     return "registerStudent";
   }
 
   /**
-   * 登録処理。新規受講生情報を登録する。
-   * 「@ModelAttribute」でモデル（ここでいうStudentDetail）に値を入れますよ、と言っている。
+   * 登録処理。新規受講生情報を登録する。 「@ModelAttribute」でモデル（ここでいうStudentDetail）に値を入れますよ、と言っている。
    * 「BindingResult」で入力チェックをすることができる。タイムリーフとかでPOSTを受け取る時にセットで使うことが多い。
+   *
    * @param studentDetail
-   * @param result エラーがあったらregisterStudentに返している。
+   * @param result        エラーがあったらregisterStudentに返している。
    * @return studentLiseにリダイレクトする。一覧画面に飛ばしている。
    */
   @PostMapping("/registerStudent")
@@ -95,6 +119,17 @@ public class StudentController {
     // ↑と書いてあるが、このregisterStudentでコース情報も一緒に登録するから、別のメソッドは呼び出さなくていい。
 
     return "redirect:/studentList"; // studentLiseにリダイレクトする。一覧画面に飛ばしている。
+  }
+
+  @PostMapping("/updateStudent")
+  public String updateStudent(@Valid @ModelAttribute Student student, BindingResult result, Model model) {
+      if (result.hasErrors()) {
+        model.addAttribute("searchStudent", student);
+        return "updateStudent";
+      }
+      // ここで更新処理を実装する。
+      service.updateStudent(student);
+      return "redirect:/updateStudent?studentId=" + student.getStudentId();
   }
 
 }

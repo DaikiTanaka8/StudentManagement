@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<!--「xmlns:th="http://www.thymeleaf.org"」→thがタイムリーフ専用のタグ、必須のもの。
+     これを宣言しているから、「th:」で始まる属性はタイムリーフのものとして使える。-->
+<head>
+  <meta charset="UTF-8">
+  <title>受講生更新</title>
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+<h1>受講生更新</h1>
+<form th:action="@{/updateStudent}" th:object="${searchStudent}" method="post">
+  <!--「th:action="@{/updateStudent}"」：アクションのURLは表示する時のものではなく、POSTメソッドのURL。
+      コントローラーの「@GetMapping("/updateStudent")」に飛ばしている。
+      「th:object="${searchStudent}"」：コントローラーのmodelの中に入っている「service.searchStudentById(studentId)」の引数。
+      「method="post"」：フォームというHTMLタグが元々持っている属性。これはupdateはないみたい。-->
+
+  <table>
+    <thead>
+    <tr>
+      <th></th> <!-- 左端は項目名の列と揃えるため空にする -->
+      <th>現在の情報</th>
+      <th>更新欄</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- ID 行 -->
+    <tr>
+      <th>ID</th>
+      <td th:text="${searchStudent.studentId}">1</td>　  <!-- 左列：現在の情報を表示するだけ -->
+      <td>  <!-- 右列：フォームに含めるための hidden + 表示用 -->
+        <input type="hidden" th:field="*{studentId}" /> <!--ユーザーには見えないが、フォーム送信時に studentId が一緒に送信される。-->
+        <span th:text="${searchStudent.studentId}">1</span> <!--画面上に「ID」を表示（ユーザーが見られる）。-->
+      </td>
+    </tr>
+
+    <!-- 名前 行 -->
+    <tr>
+      <th>名前</th>
+      <td th:text="${searchStudent.name}">山田太郎</td>
+      <td>
+        <div> <!--一つのまとまり、というもの。-->
+          <label for="name"></label> <!--ラベルの名前。nameですよ。studentDetailの要素と合わせなければならない。-->
+          <input type="text" id="name" th:field="*{name}"
+                 required oninvalid="this.setCustomValidity('名前を入力してください')"
+                 oninput="this.setCustomValidity('')">
+          <!--「required oninvalid」入力が空でinvalidになった時メッセージを上書き-->
+          <!--「oninput="this.setCustomValidity('')"」入力されたらカスタムメッセージをクリアして通常状態を戻す。-->
+          <!--input：入力項目。テキスト入力する項目。
+              「th:field」：「${studentDetail}」に紐づくフィールド名はなんなのか。
+              「*{student.name}」：studentDetail.student.nameをアスタリスクで省略している。-->
+          <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+          <!--Springのサーバーサイドバリデーション（@NotBlank など） と連動。
+              サーバー側のバリデーションでstudent.nameにエラーがある時だけ、バリデーションのメッセージを表示する。
+              「@NotBlank(message = "名前は必須です")」がここに表示される。-->
+        </div>
+      </td>
+    </tr>
+
+    <!-- カナ名 行 -->
+    <tr>
+      <th>ふりがな</th>
+      <td th:text="${searchStudent.furigana}">ヤマダタロウ</td>
+      <td>
+        <div>
+          <label for="furigana"></label>
+          <input type="text" id="furigana" th:field="*{furigana}"
+                 required oninvalid="this.setCustomValidity('ふりがなを入力してください')"
+                 oninput="this.setCustomValidity('')">
+          <p th:if="${#fields.hasErrors('furigana')}" th:errors="*{furigana}"></p>
+        </div>
+      </td>
+    </tr>
+
+    <!-- ニックネーム 行 -->
+    <tr>
+      <th>ニックネーム</th>
+      <td th:text="${searchStudent.nickname}">タロー</td>
+      <td>
+        <div>
+          <label for="nickname"></label>
+          <input type="text" id="nickname" th:field="*{nickname}">
+        </div>
+      </td>
+    </tr>
+
+    <!-- メールアドレス 行 -->
+    <tr>
+      <th>メールアドレス</th>
+      <td th:text="${searchStudent.email}">taro@example.com</td>
+      <td>
+        <div>
+          <label for="email"></label>
+          <input type="text" id="email" th:field="*{email}"
+                 required oninvalid="this.setCustomValidity('メールアドレスを入力してください')"
+                 oninput="this.setCustomValidity('')">
+          <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+        </div>
+      </td>
+    </tr>
+
+    <!-- 地域 行 -->
+    <tr>
+      <th>地域</th>
+      <td th:text="${searchStudent.city}">東京</td>
+      <td>
+        <div>
+          <label for="city"></label>
+          <input type="text" id="city" th:field="*{city}"
+                 required oninvalid="this.setCustomValidity('地域を入力してください')"
+                 oninput="this.setCustomValidity('')">
+          <p th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></p>
+        </div>
+      </td>
+    </tr>
+
+    <!-- 年齢 行 -->
+    <tr>
+      <th>年齢</th>
+      <td th:text="${searchStudent.age}">20</td>
+      <td>
+        <div>
+          <label for="age"></label>
+          <input type="number" id="age" th:field="*{age}"
+                 required oninvalid="this.setCustomValidity('年齢を入力してください')"
+                 oninput="this.setCustomValidity('')">
+          <p th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></p>
+        </div>
+      </td>
+    </tr>
+
+    <!-- 性別 行 -->
+    <tr>
+      <th>性別</th>
+      <td th:text="${searchStudent.gender}">男性</td>
+      <td>
+        <div>
+          <label for="gender"></label>
+          <select id="gender" th:field="*{gender}"
+                  required oninvalid="this.setCustomValidity('性別を選択してください')"
+                  oninput="this.setCustomValidity('')">
+            <option value="">選択してください</option>
+            <option value="男性">男性</option>
+            <option value="女性">女性</option>
+            <option value="その他">その他</option>
+          </select>
+          <p th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></p>
+        </div>
+      </td>
+    </tr>
+
+    <!-- 備考 行 -->
+    <tr>
+      <th>備考</th>
+      <td th:text="${searchStudent.remark}">特になし</td>
+      <td>
+        <div>
+          <label for="remark"></label>
+          <input type="text" id="remark" th:field="*{remark}">
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+<!--  <div th:each="course, stat : *{studentCourse}"> &lt;!&ndash;stat:タイムリーフの機能。Listだと数を数えてもらう（０始まりで数える）。studentCourseはStudentDetailがもつ要素のこと。 &ndash;&gt;-->
+<!--    <label for="courseName">受講コース名</label>-->
+<!--    <input type="text" id="courseName"-->
+<!--           th:field="*{ourse[__${stat.index}__].courseName}" /> &lt;!&ndash;studentCourseのcourseNameに設定するよ、ということ。&ndash;&gt;-->
+<!--    &lt;!&ndash; ↑StudentDetailの中のリスト/ ↑n番目 / ↑要素オブジェクトのcourseNameフィールド &ndash;&gt;-->
+<!--    &lt;!&ndash;「th:id="studentCourse.__${stat.index}__.courseName}"」講義内ではこれを入れて、idを上書きしている。labelの方もこれを入れている。 &ndash;&gt;-->
+<!--  </div>-->
+
+  <div>
+    <button type="submit">更新</button>
+  </div>
+  <div>
+    <a th:href="@{/studentList}" class="btn btn-secondary">受講生一覧に戻る</a>
+  </div>
+</form>
+</body>
+</html>

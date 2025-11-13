@@ -31,16 +31,25 @@
   </tr>
   </thead>
   <tbody>
-  <tr th:each="studentDetail : ${studentList}">。
+  <tr th:each="studentDetail : ${studentList}">
   <!--"th:each"がオリジナル。繰り返しという意味。studentDetailをぐるぐる回す。
       "${studentList}"この変数でリストが返ってくる。Listの数だけ行を作ります、ということ。-->
     <td th:text="${studentDetail.student.studentId}">1</td> <!--tdが列という意味。 -->
     <!--studentDetailのstudentのidをとってきている。
         "th:text"は、テキスト情報を表示する、ということ。-->
-    <td th:text="${studentDetail.student.name}">山田太郎</td>
-    <!--「山田太郎」とかは適当に入れているだけ。thが認識できなかった場合、山田太郎とかが表示されて確認される。
-        テンプレートエンジンは、動作確認するためにテストを入れている、ということ。-->
+    <td>
+      <a th:href="@{/updateStudent(studentId=${studentDetail.student.studentId})}"
+         th:text="${studentDetail.student.name}">
+      山田太郎
+      </a>
+    </td>
+    <!--aタグにhref=""といれると、クリックするとリンク先に飛ぶ仕様。リンクタグ（anchor）。
+        th:href="@..."で、リンク先のURL。ThymeleafのURL書き（@{}）を使い、クエリパラメータ付きのURLを生成しています。
+        (id=${...})は、URLパラメータ（?id=値）。実際は「/updateStudent?id=1」みたいになる。
+        th:text="${...}"は、表示するテキスト（名前）。クリック可みたいに見える。-->
     <td th:text="${studentDetail.student.furigana}">ヤマダタロウ</td>
+    <!--「ヤマダタロウ」とかは適当に入れているだけ。thが認識できなかった場合、ヤマダタロウとかが表示されて確認される。
+    テンプレートエンジンは、動作確認するためにテストを入れている、ということ。-->
     <td th:text="${studentDetail.student.nickname}">タロー</td>
     <td th:text="${studentDetail.student.email}">taro@example.com</td>
     <td th:text="${studentDetail.student.city}">東京</td>
