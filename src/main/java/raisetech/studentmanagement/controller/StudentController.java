@@ -68,15 +68,6 @@ public class StudentController {
   }
 
   /**
-   * 【JSON用】IDで検索した単一の受講生情報受講生コース情報一覧。
-   */
-  @GetMapping("/searchStudentJSON")
-  @ResponseBody // 以前はクラスに@RestControllerをつけていたから全てのメソッドに自動で適応されていた。今回は＠Controllerのため、これが必要。
-  public Student getStudentById(@RequestParam String studentId) {
-    return service.searchStudentById(studentId);
-  }
-
-  /**
    * IDで検索した単一の受講生情報。
    */
   @GetMapping("/updateStudent")
@@ -132,10 +123,10 @@ public class StudentController {
   }
 
   @PostMapping("/updateStudent")
-  public String updateStudent(@ModelAttribute Student student, BindingResult result, Model model) {
+  public String updateStudent(@Valid @ModelAttribute Student student, BindingResult result, Model model) {
       if (result.hasErrors()) {
         model.addAttribute("searchStudent", student);
-        return "/updateStudent";
+        return "updateStudent";
       }
       // ここで更新処理を実装する。
       service.updateStudent(student);
