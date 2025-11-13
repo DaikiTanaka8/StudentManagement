@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 
@@ -21,6 +22,14 @@ public interface StudentRepository {
    */
   @Select("SELECT * FROM students") // MyBatisのアノテーションで、このメソッドが実行するSQL文を直接書いている。
   List<Student> searchStudents(); // Listで返します。MyBatisがちゃんとListを認識する。
+
+  /**
+   * 受講生情報のID検索。IDで単一の受講生を取得してくる。
+   * @return ID検索した受講生に関する情報一覧。
+   */
+  @Select("SELECT * FROM students WHERE student_id = #{studentId}")
+  Student searchStudentById(String studentId);
+
 
   /**
    * コース情報の全件検索。
@@ -42,5 +51,8 @@ public interface StudentRepository {
           "VALUES(#{courseId}, #{studentId}, #{courseName}, #{startDate}, #{endDate})")
       // ここの中身はデータベースのフィールド名と一致するように。
   void registerStudentCourse(StudentCourse studentCourse); //
+
+  @Update("UPDATE students SET name=#{name}, furigana=#{furigana}, nickname=#{nickname}, email=#{email}, city=#{city}, age=#{age}, gender=#{gender}, remark=#{remark} WHERE student_id=#{studentId}")
+  void updateStudent(Student student);
 
 }

@@ -12,6 +12,7 @@ import lombok.Setter;
 public class Student {
 
   private String studentId;
+
   @NotBlank(message = "名前は必須です")
   private String name;
 

@@ -45,6 +45,14 @@ public class StudentService {
   }
 
   /**
+   * IDで単一受講生を検索して取得するメソッド。
+   * @return IDで検索した受講生情報（単一の受講生情報）
+   */
+  public Student searchStudentById(String studentId) {
+    return repository.searchStudentById(studentId);
+  }
+
+  /**
    * 受講生情報を登録するメソッド。
    *
    * @param studentDetail StudentとStudentListの情報をまとめたクラス。
@@ -69,4 +77,11 @@ public class StudentService {
       repository.registerStudentCourse(studentCourse);
     }
   }
+
+  @Transactional
+  public void updateStudent(Student student){
+    // ここで登録処理を書く。
+    repository.updateStudent(student);
+  }
+
 }
