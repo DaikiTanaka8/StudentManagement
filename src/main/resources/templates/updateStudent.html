@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
-<!--「xmlns:th="http://www.thymeleaf.org"」→thがタイムリーフ専用のタグ、必須のもの。
-     これを宣言しているから、「th:」で始まる属性はタイムリーフのものとして使える。-->
 <head>
   <meta charset="UTF-8">
   <title>受講生更新</title>
@@ -17,11 +15,6 @@
 <body>
 <h1>受講生更新</h1>
 <form th:action="@{/updateStudent}" th:object="${studentDetail}" method="post">
-  <!--「th:action="@{/updateStudent}"」：アクションのURLは表示する時のものではなく、POSTメソッドのURL。
-      コントローラーの「@GetMapping("/updateStudent")」に飛ばしている。
-      「th:object="${studentDetail}"」：コントローラーのmodelの中に入っている「service.searchStudentById(studentId)」の引数。
-      「method="post"」：フォームというHTMLタグが元々持っている属性。これはupdateはないみたい。-->
-
   <table>
     <thead>
     <tr>
@@ -178,8 +171,11 @@
           th:text="*{studentCourse[__${stat.index}__].courseName}">〜〜コース</span>
       </td>
       <td>
+        <!--stat:タイムリーフの機能。Listだと数を数えてもらう（０始まりで数える）。studentCourseはStudentDetailがもつ要素のこと。 -->
         <div th:each="course, stat : *{studentCourse}">
-          <!--stat:タイムリーフの機能。Listだと数を数えてもらう（０始まりで数える）。studentCourseはStudentDetailがもつ要素のこと。 -->
+          <!-- ★ 必須：courseId を渡す hidden -->
+          <input type="hidden"
+                 th:field="*{studentCourse[__${stat.index}__].courseId}" />
           <input type="text" id="courseName"
                  th:field="*{studentCourse[__${stat.index}__].courseName}"/>
           <!--studentCourseのcourseNameに設定するよ、ということ。-->
@@ -194,9 +190,14 @@
   <div>
     <button type="submit">更新</button>
   </div>
+</form>
+<!-- 削除フォーム。フォームを別にすればよかったのよ。-->
+<form th:action="@{/deleteStudent}" th:object="${studentDetail}" method="post">
+  <input type="hidden" th:field="*{student.studentId}"/>
+  <button type="submit">受講生を削除</button>
+</form>
   <div>
     <a th:href="@{/studentList}" class="btn btn-secondary">受講生一覧に戻る</a>
   </div>
-</form>
 </body>
 </html>

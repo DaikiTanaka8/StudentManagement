@@ -20,14 +20,14 @@ public interface StudentRepository {
    * 受講生情報の全件検索。
    * @return 全件検索した受講生情報の一覧
    */
-  @Select("SELECT * FROM students") // MyBatisのアノテーションで、このメソッドが実行するSQL文を直接書いている。
+  @Select("SELECT * FROM students WHERE is_deleted = false") // 「WHERE is_deleted = false」で削除フラグが立っていないものは表示される。
   List<Student> searchStudents(); // Listで返します。MyBatisがちゃんとListを認識する。
 
   /**
    * 受講生情報のID検索。IDで単一の受講生を取得してくる。（自分で作れていた！）
    * @return ID検索した受講生に関する情報一覧。
    */
-  @Select("SELECT * FROM students WHERE student_id = #{studentId}")
+  @Select("SELECT * FROM students WHERE student_id = #{studentId} AND is_deleted = false")
   Student searchStudentById(String studentId);
 
   /**
@@ -63,7 +63,10 @@ public interface StudentRepository {
   void updateStudent(Student student);
 
   @Update(
-      "UPDATE students_courses SET course_name = #{courseName} WHERE student_id = #{studentId}")
+      "UPDATE students_courses SET course_name = #{courseName} WHERE course_id = #{courseId}")
   void updateStudentCourse(StudentCourse studentCourse);
+
+  @Update("UPDATE students SET is_deleted = true WHERE student_id = #{studentId}")
+  void deleteStudent(Student student);
 
 }
