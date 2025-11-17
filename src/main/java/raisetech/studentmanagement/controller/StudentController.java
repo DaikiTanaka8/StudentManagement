@@ -3,12 +3,14 @@ package raisetech.studentmanagement.controller;
 import jakarta.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.text.html.HTML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import raisetech.studentmanagement.controller.converter.StudentConverter;
@@ -56,19 +58,16 @@ public class StudentController {
     // →attributeNameや${}の中身と合わせているわけではない。
   }
 
-  /**
-   * 受講生コース情報一覧。ユーザーからすると「ほしい」だからgetにしている。
-   *
-   * @return 全件検索した受講生コース情報の一覧。
-   */
-  @GetMapping("/studentCourseList")
-  public List<StudentCourse> getStudentCourseList() {
-    return service.searchStudentCourseList(); //サービスからリストを呼び出している。
+  // 講義30で作った受講生更新メソッド。更新メソッドと言いつつ、単一受講生情報を取得して表示している。
+  // 受講生リストの画面で名前をクリックしたときに、受講生更新の画面に遷移する→何かしら（IDとか）の情報を持ってないといけない。
+  @GetMapping("/student/{studentId}") // 単一の受講生の情報。「/student/1」みたいな表示になる。
+  public String getStudent(@PathVariable String studentId, Model model) { // ID情報を持ってないといけない→「@PathVariable」：URLの一部から受け取るときに使う。今回は{student_id}だね。
+    StudentDetail studentDetail = service.searchStudentById(studentId);
+    model.addAttribute("studentDetail", studentDetail); // 表示する時にもstudentDetailを使う。new StudentDetailで中身空っぽのものを入れておく。
+    return "updateStudent";
   }
 
-  /**
-   * IDで検索した単一の受講生情報。
-   */
+  // 自分で実装したメソッド。IDで検索した単一の受講生情報。
   @GetMapping("/updateStudent")
   public String getStudentById(@RequestParam String studentId, Model model) {
     model.addAttribute("searchStudent", service.searchStudentById(studentId));
@@ -121,15 +120,29 @@ public class StudentController {
     return "redirect:/studentList"; // studentLiseにリダイレクトする。一覧画面に飛ばしている。
   }
 
+
+  // 講義30で作った受講生更新メソッド。 登録処理。新規受講生情報を登録する。 「@ModelAttribute」でモデル（ここでいうStudentDetail）に値を入れますよ、と言っている。
   @PostMapping("/updateStudent")
-  public String updateStudent(@Valid @ModelAttribute Student student, BindingResult result, Model model) {
-      if (result.hasErrors()) {
-        model.addAttribute("searchStudent", student);
-        return "updateStudent";
-      }
-      // ここで更新処理を実装する。
-      service.updateStudent(student);
-      return "redirect:/updateStudent?studentId=" + student.getStudentId();
+  public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
+    if (result.hasErrors()) {
+      return "updateStudent";
+    }
+    service.updateStudent(studentDetail); // Service層で書いたupdateStudentを呼び出している。
+    return "redirect:/student/" + studentDetail.getStudent().getStudentId(); // ここは講義と変えた。更新画面にリダイレクトする。
   }
+
+
+//  // 下記は自分の実装
+//  @PostMapping("/updateStudent")
+//  public String updateStudent(@Valid @ModelAttribute Student student, BindingResult result,
+//      Model model) {
+//    if (result.hasErrors()) {
+//      model.addAttribute("searchStudent", student);
+//      return "updateStudent";
+//    }
+//    // ここで更新処理を実装する。
+//    service.updateStudent(student);
+//    return "redirect:/updateStudent?studentId=" + student.getStudentId();
+//  }
 
 }

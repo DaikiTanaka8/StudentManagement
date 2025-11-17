@@ -36,8 +36,20 @@ public class StudentService {
   }
 
   /**
+   * 講義30でつくったやつ。IDで単一受講生を検索して取得するメソッド。
+   * @return IDで検索した受講生情報（単一の受講生情報）+受講生コース情報。（StudentDetailで返っている！）
+   */
+  public StudentDetail searchStudentById(String studentId) {
+    Student student = repository.searchStudentById(studentId);
+    List<StudentCourse> studentCourses = repository.searchStudentCoursesById(student.getStudentId());
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail.setStudent(student);
+    studentDetail.setStudentCourse(studentCourses);
+    return studentDetail;
+  }
+
+  /**
    * 受講生コース情報を検索する。サービスとしては検索をする→search
-   *
    * @return 全件検索した受講生コース情報の一覧
    */
   public List<StudentCourse> searchStudentCourseList() {
@@ -45,16 +57,15 @@ public class StudentService {
   }
 
   /**
-   * IDで単一受講生を検索して取得するメソッド。
+   * IDで単一受講生を検索して取得するメソッド。自分で作ったやつかな。
    * @return IDで検索した受講生情報（単一の受講生情報）
    */
-  public Student searchStudentById(String studentId) {
-    return repository.searchStudentById(studentId);
-  }
+//  public Student searchStudentById(String studentId) {
+//    return repository.searchStudentById(studentId);
+//  }
 
   /**
    * 受講生情報を登録するメソッド。
-   *
    * @param studentDetail StudentとStudentListの情報をまとめたクラス。
    */
   @Transactional // サービスで登録したり更新をしたり削除したりする時に必ずつける！！
@@ -78,10 +89,24 @@ public class StudentService {
     }
   }
 
-  @Transactional
-  public void updateStudent(Student student){
-    // ここで登録処理を書く。
-    repository.updateStudent(student);
+  /**
+   * 講義30で作った受講生更新メソッド。
+   * @param studentDetail StudentとStudentListの情報をまとめたクラス。
+   */
+  @Transactional // サービスで登録したり更新をしたり削除したりする時に必ずつける！！
+  // トランザクション管理、途中でエラーになったら登録内容を戻す。サービスに入れる。（片方登録されてもう片方は登録されない、というのを防ぐ。）
+  public void updateStudent(StudentDetail studentDetail) {
+    repository.updateStudent(studentDetail.getStudent());
+    for (StudentCourse studentCourse : studentDetail.getStudentCourse()) {
+      repository.updateStudentCourse(studentCourse);
+    }
   }
+
+//  // 下記は自分の実装
+//  @Transactional
+//  public void updateStudent(Student student){
+//    // ここで更新処理を書く。
+//    repository.updateStudent(student);
+//  }
 
 }
