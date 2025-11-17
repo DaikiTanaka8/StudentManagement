@@ -24,12 +24,11 @@ public interface StudentRepository {
   List<Student> searchStudents(); // Listで返します。MyBatisがちゃんとListを認識する。
 
   /**
-   * 受講生情報のID検索。IDで単一の受講生を取得してくる。
+   * 受講生情報のID検索。IDで単一の受講生を取得してくる。（自分で作れていた！）
    * @return ID検索した受講生に関する情報一覧。
    */
   @Select("SELECT * FROM students WHERE student_id = #{studentId}")
   Student searchStudentById(String studentId);
-
 
   /**
    * コース情報の全件検索。
@@ -37,6 +36,13 @@ public interface StudentRepository {
    */
   @Select("SELECT * FROM students_courses")
   List<StudentCourse> searchStudentCourses();
+
+  /**
+   * コース情報のID検索。IDで単一のコース情報を取得してくる。
+   * @return ID検索した受講生コース情報の一覧
+   */
+  @Select("SELECT * FROM students_courses WHERE student_id = #{studentId}")
+  List<StudentCourse> searchStudentCoursesById(String studentId);
 
   @Insert(
       "INSERT INTO students(student_id,name, furigana, nickname, email, city, age, gender, remark)"
@@ -50,9 +56,14 @@ public interface StudentRepository {
       "INSERT INTO students_courses(course_id, student_id, course_name, start_date, end_date) " +
           "VALUES(#{courseId}, #{studentId}, #{courseName}, #{startDate}, #{endDate})")
       // ここの中身はデータベースのフィールド名と一致するように。
-  void registerStudentCourse(StudentCourse studentCourse); //
+  void registerStudentCourse(StudentCourse studentCourse);
 
-  @Update("UPDATE students SET name=#{name}, furigana=#{furigana}, nickname=#{nickname}, email=#{email}, city=#{city}, age=#{age}, gender=#{gender}, remark=#{remark} WHERE student_id=#{studentId}")
+  @Update("UPDATE students SET name = #{name}, furigana = #{furigana}, nickname = #{nickname}, email = #{email},"
+      + "city = #{city}, age = #{age}, gender = #{gender}, remark = #{remark}, is_deleted = #{isDeleted} WHERE student_id = #{studentId}")
   void updateStudent(Student student);
+
+  @Update(
+      "UPDATE students_courses SET course_name = #{courseName} WHERE student_id = #{studentId}")
+  void updateStudentCourse(StudentCourse studentCourse);
 
 }
