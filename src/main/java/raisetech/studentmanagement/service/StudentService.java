@@ -57,14 +57,6 @@ public class StudentService {
   }
 
   /**
-   * IDで単一受講生を検索して取得するメソッド。自分で作ったやつかな。
-   * @return IDで検索した受講生情報（単一の受講生情報）
-   */
-//  public Student searchStudentById(String studentId) {
-//    return repository.searchStudentById(studentId);
-//  }
-
-  /**
    * 受講生情報を登録するメソッド。
    * @param studentDetail StudentとStudentListの情報をまとめたクラス。
    */
@@ -76,8 +68,6 @@ public class StudentService {
     // ここで実際の登録処理
     repository.registerStudent(studentDetail.getStudent()); // repositoryを呼び分ける。
 
-    // studentDetail.getStudent().getStudentId(); // ここに値が入っているはず？？
-    // TODO:ここでコース情報登録も行う。　まとめて書ける。(TODOって書くと色が変わるメモ！)
     // 今回はListで渡さないから、ループさせないといけない。
     for (StudentCourse studentCourse : studentDetail.getStudentCourse()) {
       studentCourse.setCourseId(UUID.randomUUID().toString()); // コースIDもUUIDで自動で設定するようにした。
@@ -102,11 +92,14 @@ public class StudentService {
     }
   }
 
-//  // 下記は自分の実装
-//  @Transactional
-//  public void updateStudent(Student student){
-//    // ここで更新処理を書く。
-//    repository.updateStudent(student);
-//  }
+  /**
+   * 課題30で作った受講生削除メソッド。
+   * @param studentDetail StudentとStudentListの情報をまとめたクラス。
+   */
+  @Transactional // サービスで登録したり更新をしたり削除したりする時に必ずつける！！
+  // トランザクション管理、途中でエラーになったら登録内容を戻す。サービスに入れる。（片方登録されてもう片方は登録されない、というのを防ぐ。）
+  public void deleteStudent(StudentDetail studentDetail) {
+    repository.deleteStudent(studentDetail.getStudent());
+  }
 
 }
