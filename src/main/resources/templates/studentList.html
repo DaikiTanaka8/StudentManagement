@@ -39,7 +39,7 @@
         "th:text"は、テキスト情報を表示する、ということ。-->
     <td>
       <a th:href="@{/student/{studentId}(studentId=${studentDetail.student.studentId})}"
-         th:text="${studentDetail.student.name}"
+         th:text="${studentDetail.student.name}">
       山田太郎
       </a>
     </td>
