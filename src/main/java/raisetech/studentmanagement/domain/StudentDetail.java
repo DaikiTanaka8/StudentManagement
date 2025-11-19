@@ -1,20 +1,21 @@
 package raisetech.studentmanagement.domain;
 
-import jakarta.validation.Valid;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 
-/**
- * 画面に出す項目。StudentとStudentListの情報をまとめたクラス。
- */
+//MEMO: 画面に出す項目。StudentとStudentListの情報をまとめたクラス。
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudentDetail {
 
-  private @Valid Student student; // こっちは単一。
-  private List<StudentCourse> studentCourse; // StudentCourseはStudentに対して複数入る可能性があるため、Listとなる。
+  private Student student; //MEMO: こっちは単一。
+  private List<StudentCourse> studentCourses; //MEMO: StudentCourseはStudentに対して複数入る可能性があるためListとなる。
 
 }

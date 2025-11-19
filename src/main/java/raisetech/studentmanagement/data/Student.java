@@ -8,8 +8,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter //LombokでGetterやSetterをコンパイル時に自動で使ってくれる。→「どんなフィールドを持っているのか」に集中できる。
+@Setter //MEMO: LombokでGetterやSetterをコンパイル時に自動で使ってくれる。→「どんなフィールドを持っているのか」に集中できる。
 public class Student {
+  //MEMO: 「@NotBlank」などのアノテーションはいらない、と思ったが、Thymeleaf（画面）→ Postman（APIテストツール）に変わっただけで、
+  // バックエンドの API がバリデーションを行うかどうか、不正データが入るのを防ぐかどうかには関係がない。
 
   private String studentId;
 
