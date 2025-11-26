@@ -1,5 +1,6 @@
 package raisetech.studentmanagement.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,7 @@ public class StudentController {
    * @return 実行結果
    */
   @PostMapping("/registerStudent")
-  public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail) {
+  public ResponseEntity<StudentDetail> registerStudent(@Valid @RequestBody StudentDetail studentDetail) {
     StudentDetail responseStudentDetail = service.registerStudent(studentDetail); //MEMO: Service層で書いたregisterStudentを呼び出している。
     return ResponseEntity.ok(responseStudentDetail); //MEMO: うまくいったら「responseStudentDetail」を返す。studentIdを知りたいので。
   }
@@ -77,7 +78,7 @@ public class StudentController {
   //MEMO: 講義30で作った受講生更新メソッド。 登録処理。新規受講生情報を登録する。 「@RequestBody」でStudentDetailが飛んできますよ。というのは変わらない。
   // 画面を返すわけではないので、何も返さない。→ResponseEntityを返す。POSTなので結果がない、ただ何も返さないと困るので、更新を成功したのか失敗したのかを返す。
   @PutMapping("/updateStudent")
-  public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
+  public ResponseEntity<String> updateStudent(@Valid @RequestBody StudentDetail studentDetail) {
     service.updateStudent(studentDetail);
     return ResponseEntity.ok("更新処理が成功しました。"); //MEMO: うまくいったらOKを返す。OKの中にBodyに何を入れますか？ということ。今回メッセージなので、Stringにしている。
   }

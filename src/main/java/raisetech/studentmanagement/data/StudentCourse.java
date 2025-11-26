@@ -1,6 +1,5 @@
 package raisetech.studentmanagement.data;
 
-import jakarta.validation.constraints.Future;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;

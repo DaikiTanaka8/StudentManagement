@@ -53,8 +53,8 @@
   </update>
 
   <!--受講生を削除（論理削除）します。-->
-  <delete id="localDeleteStudent">
+  <update id="localDeleteStudent">
     UPDATE students SET is_deleted = true WHERE student_id = #{studentId}
-  </delete>
+  </update>
 
 </mapper>
