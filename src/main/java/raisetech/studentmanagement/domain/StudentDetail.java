@@ -16,6 +16,6 @@ import raisetech.studentmanagement.data.StudentCourse;
 public class StudentDetail {
 
   private Student student; //MEMO: こっちは単一。
-  private List<StudentCourse> studentCourses; //MEMO: StudentCourseはStudentに対して複数入る可能性があるためListとなる。
+  private List<StudentCourse> studentCourseList; //MEMO: StudentCourseはStudentに対して複数入る可能性があるためListとなる。
 
 }
