@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- //MEMO: ここには対応するRepositoryの完全修飾名を書きます（package + クラス名）。-->
+<mapper namespace="raisetech.studentmanagement.repository.StudentRepository">
+
+  <!-- ここに select / insert / update / delete を書く -->
+
+  <!--受講生の全件検索。//MEMO: 「WHERE is_deleted = false」で削除されていないものが表示される。-->
+  <select id="searchStudent" resultType="raisetech.studentmanagement.data.Student">
+    <!-- //MEMO: idはRepositoryのメソッド名。resultTypeはフルパスを指定しないと動かない。 -->
+    SELECT * FROM students WHERE is_deleted = false
+  </select>
+
+  <!--受講生の検索。//MEMO: 受講生情報のID検索。IDで単一の受講生を取得してくる。-->
+  <select id="searchStudentById" resultType="raisetech.studentmanagement.data.Student">
+    SELECT * FROM students WHERE student_id = #{studentId} AND is_deleted = false
+  </select>
+
+  <!--受講生のコース情報の全件検索。-->
+  <select id="searchStudentCourseList" resultType="raisetech.studentmanagement.data.StudentCourse">
+    SELECT * FROM students_courses
+  </select>
+
+  <!--受講生IDに紐づくコース情報の検索。-->
+  <select id="searchStudentCourseListById" resultType="raisetech.studentmanagement.data.StudentCourse">
+    SELECT * FROM students_courses WHERE student_id = #{studentId}
+  </select>
+
+  <!--受講生を新規登録します。IDに関しては自動採番を行う（UUID）。//MEMO: INSERTだから登録した後何も返さない→resultTYpeが不要。-->
+  <insert id="registerStudent">
+    INSERT INTO students(student_id,name, furigana, nickname, email, city, age, gender, remark)
+    VALUES(#{studentId}, #{name}, #{furigana}, #{nickname}, #{email}, #{city}, #{age}, #{gender}, #{remark})
+  </insert>
+
+  <!--受講生コース情報を新規登録します。IDに関しては自動採番を行う（UUID）。-->
+  <insert id="registerStudentCourse">
+    INSERT INTO students_courses(course_id, student_id, course_name, start_date, end_date)
+    VALUES(#{courseId}, #{studentId}, #{courseName}, #{startDate}, #{endDate})
+  </insert>
+
+  <!--受講生を更新します-->
+  <update id="updateStudent">
+    UPDATE students SET name = #{name}, furigana = #{furigana}, nickname = #{nickname}, email = #{email},
+    city = #{city}, age = #{age}, gender = #{gender}, remark = #{remark}, is_deleted = #{isDeleted} WHERE student_id = #{studentId}
+  </update>
+
+  <!--受講生コース情報を更新します-->
+  <update id="updateStudentCourse">
+    UPDATE students_courses SET course_name = #{courseName} WHERE course_id = #{courseId}
+  </update>
+
+  <!--受講生を削除（論理削除）します。-->
+  <delete id="localDeleteStudent">
+    UPDATE students SET is_deleted = true WHERE student_id = #{studentId}
+  </delete>
+
+</mapper>

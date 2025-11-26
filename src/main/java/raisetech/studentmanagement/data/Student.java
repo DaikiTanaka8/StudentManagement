@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +20,7 @@ public class Student {
   private String name;
 
   @NotBlank(message = "ふりがなは必須です")
+  @Pattern(regexp = "^[\\u3040-\\u309F]+$", message = "ふりがなはひらがなで入力してください")
   private String furigana;
 
   private String nickname;
@@ -35,6 +37,7 @@ public class Student {
   private int age;
 
   @NotBlank(message = "性別を入力してください")
+  @Pattern(regexp = "^(男性|女性|その他)$", message = "性別は 男性・女性・その他 のいずれかで入力してください")
   private String gender;
 
   private String remark;

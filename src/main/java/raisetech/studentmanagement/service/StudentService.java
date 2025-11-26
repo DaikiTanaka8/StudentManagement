@@ -108,11 +108,11 @@ public class StudentService {
   /**
    * 受講生詳細の削除（論理削除）を行います。
    *
-   * @param studentDetail 受講生詳細
+   * @param studentId 受講生ID
    */
   @Transactional //MEMO: サービスで登録したり更新をしたり削除したりする時に必ずつける！！
-  public void deleteStudent(StudentDetail studentDetail) {
-    repository.deleteStudent(studentDetail.getStudent());
+  public void localDeleteStudent(String studentId) {
+    repository.localDeleteStudent(studentId);
   }
 
 }
