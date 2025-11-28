@@ -3,17 +3,23 @@ package raisetech.studentmanagement.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import jdk.jshell.spi.ExecutionControl.RunException;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.exception.TestException;
 import raisetech.studentmanagement.service.StudentService;
 
 /**
@@ -23,6 +29,7 @@ import raisetech.studentmanagement.service.StudentService;
 @RestController //MEMO: @RestController(JSONで返していた)→@Controllerに変える(HTML使用時）→再度RestControllerに変える
 public class StudentController {
   private StudentService service; //MEMO: 受講生サービス。まずはサービスを持つ必要があるので、ここで記述。
+  private Logger logger;
 
   /**
    * コンストラクタ
@@ -41,9 +48,15 @@ public class StudentController {
    * @return 受講生詳細一覧（全件）。 //MEMO: コンバートした受講生情報→受講生とその受講生が受講している受講生コース情報の一覧
    */
   @GetMapping("/studentList")
-  public List<StudentDetail> getStudentList() {
-    return service.searchStudentList();
+  public List<StudentDetail> getStudentList(){
+    throw new TestException(
+        "現在このAPIは利用できません。URLは「studentList」ではなく「〜〜〜」にしてください。");
   }
+
+//  @GetMapping("/studentList")
+//  public List<StudentDetail> getStudentList() {
+//    return service.searchStudentList();
+//  }
 
   //MEMO: 講義30で作った受講生更新メソッド。更新メソッドと言いつつ、単一受講生情報を取得して表示している。
   /**
