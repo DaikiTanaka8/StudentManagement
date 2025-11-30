@@ -1,5 +1,6 @@
 package raisetech.studentmanagement.domain;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 
 //MEMO: 画面に出す項目。StudentとStudentListの情報をまとめたクラス。
+@Schema(description = "受講生詳細")
 @Getter
 @Setter
 @NoArgsConstructor
