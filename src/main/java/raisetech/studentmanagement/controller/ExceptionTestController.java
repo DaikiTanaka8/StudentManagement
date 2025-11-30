@@ -52,12 +52,11 @@ public class ExceptionTestController {
   }
 
   /**
-   * ResourceNotFoundExceptionをテストするエンドポイントです。 アクセス: GET /testException/notFound 期待結果: 404 Not
-   * Found
+   * ResourceNotFoundExceptionをテストするエンドポイントです。 アクセス: GET /testException/notFound 期待結果: 404 Not Found
    */
   @Operation(
       summary = "ResourceNotFoundExceptionの動作確認",
-      description = "このエンドポイントにアクセスすると強制的に ResourceNotFoundException を発生させ、400 Bad Request を返します。",
+      description = "このエンドポイントにアクセスすると強制的に ResourceNotFoundException を発生させ、404 Not Found を返します。",
       operationId = "testResourceNotFoundException"
   )
   @ApiResponses({
