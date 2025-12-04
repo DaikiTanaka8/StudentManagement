@@ -1,10 +1,12 @@
 package raisetech.studentmanagement.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Transactional;
 import raisetech.studentmanagement.controller.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
@@ -65,7 +68,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生詳細が適切に動作していること(){
+  void 受講生詳細検索_リポジトリの呼び出しが適切に動作していること(){
     // 事前準備
     Student student = new Student();
     String studentId = "test-id-123";
@@ -78,10 +81,65 @@ class StudentServiceTest {
     sut.searchStudentById(studentId);
 
     // 検証
-    Mockito.verify(repository, times(1)).searchStudentById(studentId); //MEMO: 「repository」を１回呼んでます。
-    Mockito.verify(repository, times(1)).searchStudentCourseListById(student.getStudentId()); //MEMO: 「repository」を１回呼んでます。
+    Mockito.verify(repository, times(1)).searchStudentById(studentId);
+    Mockito.verify(repository, times(1)).searchStudentCourseListById(student.getStudentId());
+
   }
 
+  @Test
+  void 受講生詳細登録_リポジトリが適切に呼び出されていること(){
 
+    // 事前準備
+    Student student = new Student(); //MEMO: ②"StudentDetail"に含まれる"Student"を用意。
+    StudentCourse course1 =new StudentCourse();
+    StudentCourse course2 =new StudentCourse();
+    StudentCourse course3 =new StudentCourse();
+    List<StudentCourse> studentCourseList = List.of(course1, course2, course3); //MEMO: ②"StudentDetail"に含まれる"StudentCourseList"を用意。
+    StudentDetail studentDetail = new StudentDetail(student, studentCourseList); //MEMO: ①メソッドの引数は"StudentDetail"。
+    //MEMO: ちなみに、foreachやinitStudentCourseではrepositoryは呼び出されていない。なのでWhen-Thenは使わない。
+
+    // 実行
+    sut.registerStudent(studentDetail);
+
+    // 検証
+    Mockito.verify(repository, times(1)).registerStudent(student);
+    Mockito.verify(repository, times(3)).registerStudentCourse(any(StudentCourse.class));
+    //MEMO: any()は「「どんなStudentCourseでもいいから、3回呼ばれたことを確認」という意味。
+  }
+
+  @Test
+  void 受講生詳細更新_リポジトリが適切に呼び出されていること(){
+
+    // 事前準備
+    Student student = new Student(); //MEMO: ②"StudentDetail"に含まれる"Student"を用意。
+    StudentCourse course1 =new StudentCourse();
+    StudentCourse course2 =new StudentCourse();
+    StudentCourse course3 =new StudentCourse();
+    List<StudentCourse> studentCourseList = List.of(course1, course2, course3); //MEMO: ②"StudentDetail"に含まれる"StudentCourseList"を用意。
+    StudentDetail studentDetail = new StudentDetail(student, studentCourseList); //MEMO: ①メソッドの引数は"StudentDetail"。
+    //MEMO: ちなみに、foreachやinitStudentCourseではrepositoryは呼び出されていない。なのでWhen-Thenは使わない。
+
+    // 実行
+    sut.updateStudent(studentDetail);
+
+    // 検証
+    Mockito.verify(repository, times(1)).updateStudent(student);
+    Mockito.verify(repository, times(3)).updateStudentCourse(any(StudentCourse.class));
+    //MEMO: any()は「「どんなStudentCourseでもいいから、3回呼ばれたことを確認」という意味。
+  }
+
+  @Test
+  void 受講生詳細の論理削除_リポジトリが適切に呼び出されていること(){
+
+    // 事前準備
+    String studentId = "test-id-123";
+
+    // 実行
+    sut.localDeleteStudent(studentId);
+
+    // 検証
+    Mockito.verify(repository, times(1)).localDeleteStudent(studentId);
+
+  }
 
 }
