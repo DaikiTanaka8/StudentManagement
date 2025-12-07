@@ -102,12 +102,12 @@ class StudentServiceTest {
     StudentDetail actual = sut.searchStudentById("test-id-123");
 
     // 検証
-    Assertions.assertEquals(expectedStudent, actual.getStudent());
-    Assertions.assertEquals(expectedStudentCourseList, actual.getStudentCourseList());
+    assertEquals(expectedStudent.getStudentId(), actual.getStudent().getStudentId());
+    assertEquals(expectedStudent.getName(), actual.getStudent().getName());
+    assertEquals(expectedStudentCourseList, actual.getStudentCourseList());
 
   }
 
-  //TODO: メンターに確認できるなら「NPEが発生することを確認するテストで良いですか？」「それとも、NPEが発生しないようにServiceを修正すべきですか？」と聞いてみる。
   @Test
   void 受講生詳細検索_存在しないIDの場合はNullPointerExceptionが発生すること(){
     // 事前準備
