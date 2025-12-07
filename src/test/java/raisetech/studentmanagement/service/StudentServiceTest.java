@@ -6,6 +6,7 @@ import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -84,6 +85,44 @@ class StudentServiceTest {
   }
 
   @Test
+  void 受講生詳細検索_正しい受講生詳細が返されること(){
+    // 事前準備
+    Student expectedStudent = new Student();
+    expectedStudent.setStudentId("test-id-123");
+    expectedStudent.setName("テスト");
+
+    StudentCourse course1 = new StudentCourse();
+    course1.setCourseName("テストコース");
+    List<StudentCourse> expectedStudentCourseList = List.of(course1);
+
+    Mockito.when(repository.searchStudentById("test-id-123")).thenReturn(expectedStudent);
+    Mockito.when(repository.searchStudentCourseListById("test-id-123")).thenReturn(expectedStudentCourseList);
+
+    // 実行
+    StudentDetail actual = sut.searchStudentById("test-id-123");
+
+    // 検証
+    Assertions.assertEquals(expectedStudent, actual.getStudent());
+    Assertions.assertEquals(expectedStudentCourseList, actual.getStudentCourseList());
+
+  }
+
+  //TODO: メンターに確認できるなら「NPEが発生することを確認するテストで良いですか？」「それとも、NPEが発生しないようにServiceを修正すべきですか？」と聞いてみる。
+  @Test
+  void 受講生詳細検索_存在しないIDの場合はNullPointerExceptionが発生すること(){
+    // 事前準備
+    String studentId = "存在しないID";
+    Mockito.when(repository.searchStudentById(studentId)).thenReturn(null);
+
+    // 実行 & 検証
+    assertThrows(NullPointerException.class, () -> {
+      sut.searchStudentById(studentId);
+    });
+    // MEMO: 「assertThrows(例外クラス, () -> { 実行するコード })」は、「この処理を実行したら、この例外が発生するはず」という検証。
+
+  }
+
+  @Test
   void 受講生詳細登録_リポジトリが適切に呼び出されていること(){
 
     // 事前準備
@@ -102,6 +141,40 @@ class StudentServiceTest {
     Mockito.verify(repository, times(1)).registerStudent(student);
     Mockito.verify(repository, times(3)).registerStudentCourse(any(StudentCourse.class));
     //MEMO: any()は「「どんなStudentCourseでもいいから、3回呼ばれたことを確認」という意味。
+  }
+
+  @Test
+  void 受講生詳細登録_登録情報が適切に付与されて返されること(){
+
+    // 事前準備
+    Student student = new Student();
+    student.setName("テスト太郎");
+
+    StudentCourse course1 =new StudentCourse();
+    course1.setCourseName("テストコース");
+    List<StudentCourse> studentCourseList = List.of(course1);
+    StudentDetail studentDetail = new StudentDetail(student, studentCourseList);
+    //MEMO: studentIdやcourseId,startDate,endDateは自動生成されるから設定しない。
+
+    // 実行
+    StudentDetail actual= sut.registerStudent(studentDetail);
+
+    // 検証
+    //MEMO: 入力した値が保持されているか。
+    assertEquals("テスト太郎", actual.getStudent().getName());
+    assertEquals("テストコース", actual.getStudentCourseList().get(0).getCourseName());
+
+    //MEMO: studentIdが自動生成されているか。
+    assertNotNull(actual.getStudent().getStudentId());
+
+    //MEMO: コースの初期値が設定されているか。
+    StudentCourse actualStudentCourseList = actual.getStudentCourseList().get(0);
+    assertNotNull(actualStudentCourseList.getCourseId());
+    assertNotNull(actualStudentCourseList.getStartDate());
+    assertNotNull(actualStudentCourseList.getEndDate());
+
+    //MEMO: 登録したStudentのstudentIdとコース情報のstudentIdが一致しているかどうか。
+    assertEquals(actual.getStudent().getStudentId(), actualStudentCourseList.getStudentId());
   }
 
   @Test
