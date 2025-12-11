@@ -230,6 +230,8 @@ class StudentControllerTest {
 
   @Test
   void 受講生更新で不正なメールアドレスを入力して実行したら500エラーが返ること() throws Exception {
+    // MEMO: 現在はMethodArgumentNotValidExceptionのハンドラーがないため、GlobalExceptionHandlerのhandleGeneralExceptionで500エラーとなる。
+    // TODO: 将来的には400エラーに修正することを検討。
 
     Student student = new Student();
     student.setName("更新テスト");
@@ -258,8 +260,6 @@ class StudentControllerTest {
 
   @Test
   void 受講生詳細の論理削除を実行したら削除成功メッセージが返ってくること() throws Exception {
-    // MEMO: 現在はMethodArgumentNotValidExceptionのハンドラーがないため、GlobalExceptionHandlerのhandleGeneralExceptionで500エラーとなる。
-    // TODO: 将来的には400エラーに修正することを検討。
     Student student = new Student();
     student.setStudentId("12345");
 
