@@ -149,30 +149,30 @@ class StudentControllerTest {
     // 送るデータ
     Student inputStudent = new Student();
     inputStudent.setStudentId("test-id-123");
-    inputStudent.setName("テスト太郎");
-    inputStudent.setFurigana("てすとたろう");
+    inputStudent.setName("登録テスト");
+    inputStudent.setFurigana("とうろくてすと");
     inputStudent.setEmail("test@example.com");
     inputStudent.setCity("東京都");
     inputStudent.setAge(100);
     inputStudent.setGender("その他");
 
     StudentCourse course =new StudentCourse();
-    course.setCourseName("テストコース");
+    course.setCourseName("登録テストコース");
 
     StudentDetail inputStudentDetail = new StudentDetail(inputStudent,List.of(course));
 
     // 返ってくるデータ
     Student respenseStudent = new Student();
     respenseStudent.setStudentId("test-id-123"); //MEMO: 自動生成されたID
-    respenseStudent.setName("テスト太郎");
-    respenseStudent.setFurigana("てすとたろう");
+    respenseStudent.setName("登録テスト");
+    respenseStudent.setFurigana("とうろくてすと");
     respenseStudent.setEmail("test@example.com");
     respenseStudent.setCity("東京都");
     respenseStudent.setAge(100);
     respenseStudent.setGender("その他");
 
     StudentCourse responseCourse = new StudentCourse();
-    responseCourse.setCourseName("テストコース");
+    responseCourse.setCourseName("登録テストコース");
 
     StudentDetail responseStudentDetail = new StudentDetail(respenseStudent,List.of(responseCourse));
 
@@ -190,8 +190,76 @@ class StudentControllerTest {
 
   }
 
+  @Test
+  void 受講生更新を実行したら更新成功メッセージが返ってくること() throws Exception {
 
+    Student student = new Student();
+    student.setName("更新テスト");
+    student.setFurigana("こうしんてすと");
+    student.setEmail("test@example.com");
+    student.setCity("東京都");
+    student.setAge(100);
+    student.setGender("その他");
 
+    StudentCourse course =new StudentCourse();
+    course.setCourseName("更新テストコース");
+
+    StudentDetail studentDetail = new StudentDetail(student,List.of(course));
+
+    // 実行 & 検証
+    mockMvc.perform(put("/updateStudent")
+        .contentType(MediaType.APPLICATION_JSON) //MEMO: Content-Typeを指定。
+        .content(objectMapper.writeValueAsString(studentDetail))) //MEMO: JSONの文字列を指定。StudentDetailをStringにしてくれている。
+        .andExpect(status().isOk())
+        .andExpect(content().string("更新処理が成功しました。"));
+
+    verify(service, times(1)).updateStudent(any(StudentDetail.class));
+
+  }
+
+  @Test
+  void 受講生更新で不正なメールアドレスを入力して実行したら500エラーが返ること() throws Exception {
+
+    Student student = new Student();
+    student.setName("更新テスト");
+    student.setFurigana("こうしんてすと");
+    student.setEmail("不正なアドレス"); // バリデーションエラー
+    student.setCity("東京都");
+    student.setAge(100);
+    student.setGender("その他");
+
+    StudentCourse course =new StudentCourse();
+    course.setCourseName("更新テストコース");
+
+    StudentDetail studentDetail = new StudentDetail(student,List.of(course));
+
+    // 実行 & 検証
+    mockMvc.perform(put("/updateStudent")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(studentDetail)))
+        .andExpect(status().isInternalServerError()) //MEMO: 500エラーを期待
+        .andExpect(content().string("サーバーエラーが発生しました。管理者に連絡してください。"));
+
+    // MEMO: バリデーションエラーなのでserviceは呼ばれない
+    verify(service, times(0)).updateStudent(any(StudentDetail.class));
+
+  }
+
+  @Test
+  void 受講生詳細の論理削除を実行したら削除成功メッセージが返ってくること() throws Exception {
+    Student student = new Student();
+    student.setStudentId("12345");
+
+    // 実行 & 検証
+    mockMvc.perform(delete("/student/12345")
+        .contentType(MediaType.APPLICATION_JSON) //MEMO: Content-Typeを指定。
+        .content(objectMapper.writeValueAsString(student))) //MEMO: JSONの文字列を指定。StudentDetailをStringにしてくれている。
+        .andExpect(status().isOk())
+        .andExpect(content().string("削除処理が成功しました。"));
+
+    verify(service, times(1)).localDeleteStudent("12345");
+
+  }
 
 
 }
