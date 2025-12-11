@@ -45,10 +45,6 @@ class StudentControllerTest {
   @MockBean
   private StudentRepository repository; //MEMO: これがないとMyBatisのリポジトリを呼び出してしまう。だから、リポジトリもMock化してしまった。
 
-  @MockBean
-  private StudentConverter converter; //MEMO: これも追加しておく！
-
-
   private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
   //MEMO: Bean Validation（Jakarta Validation / Hibernate Validator）を使うための“バリデータ本体”を生成するコード。
   // 「Javaのバリデーションを手動で実行できる Validator インスタンスを取得している」。Controller の @Valid の裏側で動いているやつを、自分で呼び出せるようにしている。
@@ -56,11 +52,25 @@ class StudentControllerTest {
 
   @Test
   void 受講生詳細の一覧検索が実行できてからのリストが返ってくること() throws Exception {
-    when(service.searchStudentList()).thenReturn(List.of(new StudentDetail()));
+    Student student = new Student();
+    student.setStudentId("test-id-123");
+    student.setName("テスト太郎");
+    StudentDetail studentDetail = new StudentDetail(student, List.of());
+    when(service.searchStudentList()).thenReturn(List.of(studentDetail));
 
     mockMvc.perform(get("/studentList")) //MEMO: テスト用の疑似HTTPクライアント（mockMvc）を使って、GET/studentListを実行。
         .andExpect(status().isOk()) //MEMO: Controllerからの戻り値（HTTP ステータスコード）が 200 OK であることを確認。
-        .andExpect(content().json("[]"));
+        .andExpect(content().json("""
+                    [
+                        {
+                            "student": {
+                                "studentId": "test-id-123",
+                                "name": "テスト太郎"
+                            },
+                            "studentCourseList": []
+                        }
+                    ]
+            """));
 
     verify(service, times(1)).searchStudentList();
   }
@@ -68,7 +78,7 @@ class StudentControllerTest {
   @Test
   void 受講生詳細の受講生で適切な値を入力したときに入力チェックに異常が発生しないこと(){
     Student student = new Student();
-    student.setStudentId("123");
+    student.setStudentId("test-id-123");
     student.setName("テスト太郎");
     student.setFurigana("てすとたろう");
     student.setEmail("test@example.com");
@@ -105,7 +115,7 @@ class StudentControllerTest {
   @Test
   void 受講生検索のID検索が実行したら受講生詳細が返ってくること() throws Exception {
     Student student = new Student();
-    student.setStudentId("12345");
+    student.setStudentId("test-id-123");
     student.setName("テスト太郎");
     student.setFurigana("てすとたろう");
     student.setNickname("テストさん");
@@ -117,14 +127,14 @@ class StudentControllerTest {
 
     StudentDetail studentDetail = new StudentDetail(student,List.of());
 
-    when(service.searchStudentById("12345")).thenReturn(studentDetail);
+    when(service.searchStudentById("test-id-123")).thenReturn(studentDetail);
 
-    mockMvc.perform(get("/student/12345"))
+    mockMvc.perform(get("/student/test-id-123"))
         .andExpect(status().isOk())
         .andExpect(content().json("""
             {
                 "student": {
-                    "studentId": "12345",
+                    "studentId": "test-id-123",
                     "name": "テスト太郎",
                     "furigana": "てすとたろう",
                     "nickname": "テストさん",
@@ -139,7 +149,7 @@ class StudentControllerTest {
             }
             """));
 
-    verify(service, times(1)).searchStudentById("12345");
+    verify(service, times(1)).searchStudentById("test-id-123");
 
   }
 
@@ -184,7 +194,8 @@ class StudentControllerTest {
     mockMvc.perform(post("/registerStudent")
         .contentType(MediaType.APPLICATION_JSON) //MEMO: Content-Typeを指定。
         .content(objectMapper.writeValueAsString(inputStudentDetail))) //MEMO: JSONの文字列を指定。StudentDetailをStringにしてくれている。
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpect(content().json(objectMapper.writeValueAsString(responseStudentDetail)));
 
     verify(service, times(1)).registerStudent(any(StudentDetail.class));
 
@@ -247,6 +258,8 @@ class StudentControllerTest {
 
   @Test
   void 受講生詳細の論理削除を実行したら削除成功メッセージが返ってくること() throws Exception {
+    // MEMO: 現在はMethodArgumentNotValidExceptionのハンドラーがないため、GlobalExceptionHandlerのhandleGeneralExceptionで500エラーとなる。
+    // TODO: 将来的には400エラーに修正することを検討。
     Student student = new Student();
     student.setStudentId("12345");
 
@@ -260,6 +273,5 @@ class StudentControllerTest {
     verify(service, times(1)).localDeleteStudent("12345");
 
   }
-
 
 }
