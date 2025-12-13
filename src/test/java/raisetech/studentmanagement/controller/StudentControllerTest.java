@@ -212,6 +212,39 @@ class StudentControllerTest {
   }
 
   @Test
+  void 受講生登録を実行できて空で返ってくること() throws Exception {
+    // MEMO: 【講義にて紹介されたテスト】
+    // リクエストデータは適切に構築していて入力チェックの検証も兼ねている。
+    // 本来であれば帰りは登録されたデータが入るが、モック化すると意味がないため、レスポンスは作らない。
+
+    // 事前準備
+    // 送るデータ
+    Student inputStudent = new Student();
+    inputStudent.setStudentId("test-id-123");
+    inputStudent.setName("登録テスト");
+    inputStudent.setFurigana("とうろくてすと");
+    inputStudent.setEmail("test@example.com");
+    inputStudent.setCity("東京都");
+    inputStudent.setAge(100);
+    inputStudent.setGender("その他");
+
+    StudentCourse course =new StudentCourse();
+    course.setCourseName("登録テストコース");
+
+    StudentDetail inputStudentDetail = new StudentDetail(inputStudent,List.of(course));
+
+    // 実行 & 検証
+    mockMvc.perform(post("/registerStudent")
+            .contentType(MediaType.APPLICATION_JSON) //MEMO: Content-Typeを指定。
+            .content(objectMapper.writeValueAsString(inputStudentDetail))) //MEMO: JSONの文字列を指定。StudentDetailをStringにしてくれている。
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).registerStudent(any());
+
+  }
+
+
+  @Test
   void 受講生更新を実行したら更新成功メッセージが返ってくること() throws Exception {
 
     Student student = new Student();
