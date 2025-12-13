@@ -129,7 +129,7 @@ class StudentControllerTest {
 
     when(service.searchStudentById("test-id-123")).thenReturn(studentDetail);
 
-    mockMvc.perform(get("/student/test-id-123"))
+    mockMvc.perform(get("/student/{studentId}", student.getStudentId()))
         .andExpect(status().isOk())
         .andExpect(content().json("""
             {
@@ -149,7 +149,17 @@ class StudentControllerTest {
             }
             """));
 
-    verify(service, times(1)).searchStudentById("test-id-123");
+    verify(service, times(1)).searchStudentById(student.getStudentId());
+
+  }
+
+  @Test
+  void 受講生検索のID検索で不正なID検索を実行したら500エラーが返ってくること() throws Exception {
+    String studentId = "error-test-000000000000000000000000000000";
+    mockMvc.perform(get("/student/{studentId}", studentId))
+        .andExpect(status().isInternalServerError()); //MEMO: URLが36文字以上だから、500エラーが返ってくる。
+
+    verify(service, times(0)).searchStudentById(studentId); //MEMO: エラーだからリポジトリは呼び出されない。
 
   }
 
