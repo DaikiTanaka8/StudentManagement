@@ -325,4 +325,76 @@ class StudentControllerTest {
         .andExpect(content().string(""));
   }
 
+  @Test
+  void 受講生詳細の受講生で名前の入力がないときに入力チェックがかかること(){
+    Student student = new Student();
+    student.setName("");
+    student.setFurigana("とうろくてすと");
+    student.setEmail("test@example.com");
+    student.setCity("東京都");
+    student.setAge(100);
+    student.setGender("その他");
+
+    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("名前は必須です");
+
+  }
+
+  @Test
+  void 受講生詳細の受講生でふりがなをカタカナで入力したときに入力チェックがかかること(){
+    Student student = new Student();
+    student.setName("登録テスト");
+    student.setFurigana("カタカナデニュウリョク");
+    student.setEmail("test@example.com");
+    student.setCity("東京都");
+    student.setAge(100);
+    student.setGender("その他");
+
+    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("ふりがなはひらがなで入力してください");
+
+  }
+
+  @Test
+  void 受講生詳細の受講生で地域の入力がないときに入力チェックがかかること(){
+    Student student = new Student();
+    student.setName("登録テスト");
+    student.setFurigana("とうろくてすと");
+    student.setEmail("test@example.com");
+    student.setCity("");
+    student.setAge(100);
+    student.setGender("その他");
+
+    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("地域は必須です");
+
+  }
+
+  @Test
+  void 受講生詳細の受講生で年齢の入力が10歳未満のときに入力チェックがかかること(){
+    Student student = new Student();
+    student.setName("登録テスト");
+    student.setFurigana("とうろくてすと");
+    student.setEmail("test@example.com");
+    student.setCity("東京都");
+    student.setAge(1);
+    student.setGender("その他");
+
+    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("年齢は10歳以上で入力してください");
+
+  }
+
 }
