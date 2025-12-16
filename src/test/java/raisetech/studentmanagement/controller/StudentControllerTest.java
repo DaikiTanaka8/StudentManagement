@@ -22,7 +22,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import raisetech.studentmanagement.controller.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 import raisetech.studentmanagement.domain.StudentDetail;
@@ -129,7 +128,7 @@ class StudentControllerTest {
 
     when(service.searchStudentById("test-id-123")).thenReturn(studentDetail);
 
-    mockMvc.perform(get("/student/test-id-123"))
+    mockMvc.perform(get("/student/{studentId}", student.getStudentId()))
         .andExpect(status().isOk())
         .andExpect(content().json("""
             {
@@ -149,7 +148,17 @@ class StudentControllerTest {
             }
             """));
 
-    verify(service, times(1)).searchStudentById("test-id-123");
+    verify(service, times(1)).searchStudentById(student.getStudentId());
+
+  }
+
+  @Test
+  void 受講生検索のID検索で不正なID検索を実行したら500エラーが返ってくること() throws Exception {
+    String studentId = "error-test-000000000000000000000000000000";
+    mockMvc.perform(get("/student/{studentId}", studentId))
+        .andExpect(status().isInternalServerError()); //MEMO: URLが36文字以上だから、500エラーが返ってくる。
+
+    verify(service, times(0)).searchStudentById(studentId); //MEMO: エラーだからリポジトリは呼び出されない。
 
   }
 
@@ -200,6 +209,39 @@ class StudentControllerTest {
     verify(service, times(1)).registerStudent(any(StudentDetail.class));
 
   }
+
+  @Test
+  void 受講生登録を実行できて空で返ってくること() throws Exception {
+    // MEMO: 【講義にて紹介されたテスト】
+    // リクエストデータは適切に構築していて入力チェックの検証も兼ねている。
+    // 本来であれば帰りは登録されたデータが入るが、モック化すると意味がないため、レスポンスは作らない。
+
+    // 事前準備
+    // 送るデータ
+    Student inputStudent = new Student();
+    inputStudent.setStudentId("test-id-123");
+    inputStudent.setName("登録テスト");
+    inputStudent.setFurigana("とうろくてすと");
+    inputStudent.setEmail("test@example.com");
+    inputStudent.setCity("東京都");
+    inputStudent.setAge(100);
+    inputStudent.setGender("その他");
+
+    StudentCourse course =new StudentCourse();
+    course.setCourseName("登録テストコース");
+
+    StudentDetail inputStudentDetail = new StudentDetail(inputStudent,List.of(course));
+
+    // 実行 & 検証
+    mockMvc.perform(post("/registerStudent")
+            .contentType(MediaType.APPLICATION_JSON) //MEMO: Content-Typeを指定。
+            .content(objectMapper.writeValueAsString(inputStudentDetail))) //MEMO: JSONの文字列を指定。StudentDetailをStringにしてくれている。
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).registerStudent(any());
+
+  }
+
 
   @Test
   void 受講生更新を実行したら更新成功メッセージが返ってくること() throws Exception {
@@ -271,6 +313,86 @@ class StudentControllerTest {
         .andExpect(content().string("削除処理が成功しました。"));
 
     verify(service, times(1)).localDeleteStudent("12345");
+
+  }
+
+//  @Test
+//  void 受講生詳細の例外APIが実行できてステータスが400で返ってくること() throws Exception{
+//    // TODO: テスト通ってない。500エラーで返ってくる。
+//    mockMvc.perform(get("/exception"))
+//        .andExpect(status().is4xxClientError())
+//        .andExpect(content().string(""));
+//  }
+
+  @Test
+  void 受講生詳細の受講生で名前の入力がないときに入力チェックがかかること(){
+    Student student = new Student();
+    student.setName("");
+    student.setFurigana("とうろくてすと");
+    student.setEmail("test@example.com");
+    student.setCity("東京都");
+    student.setAge(100);
+    student.setGender("その他");
+
+    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("名前は必須です");
+
+  }
+
+  @Test
+  void 受講生詳細の受講生でふりがなをカタカナで入力したときに入力チェックがかかること(){
+    Student student = new Student();
+    student.setName("登録テスト");
+    student.setFurigana("カタカナデニュウリョク");
+    student.setEmail("test@example.com");
+    student.setCity("東京都");
+    student.setAge(100);
+    student.setGender("その他");
+
+    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("ふりがなはひらがなで入力してください");
+
+  }
+
+  @Test
+  void 受講生詳細の受講生で地域の入力がないときに入力チェックがかかること(){
+    Student student = new Student();
+    student.setName("登録テスト");
+    student.setFurigana("とうろくてすと");
+    student.setEmail("test@example.com");
+    student.setCity("");
+    student.setAge(100);
+    student.setGender("その他");
+
+    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("地域は必須です");
+
+  }
+
+  @Test
+  void 受講生詳細の受講生で年齢の入力が10歳未満のときに入力チェックがかかること(){
+    Student student = new Student();
+    student.setName("登録テスト");
+    student.setFurigana("とうろくてすと");
+    student.setEmail("test@example.com");
+    student.setCity("東京都");
+    student.setAge(1);
+    student.setGender("その他");
+
+    Set<ConstraintViolation<Student>> violations = validator.validate(student);
+
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("年齢は10歳以上で入力してください");
 
   }
 
