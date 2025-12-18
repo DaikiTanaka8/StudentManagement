@@ -59,6 +59,9 @@ dependencies {
 
     // MyBatisTest
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+
+    // H2(InMemoryDB)
+    testImplementation 'com.h2database:h2'
 }
 
 tasks.named('test') {
