@@ -49,10 +49,16 @@ dependencies {
     // MyBatis
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
 
+    // APサーバー(Tomcat)
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+    // SpringBoot Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.assertj:assertj-core:3.24.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // MyBatisTest
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
 }
 
 tasks.named('test') {
