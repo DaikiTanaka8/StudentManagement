@@ -110,7 +110,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生更新が行えること(){
+  void 受講生の更新が行えること(){
     Student student = new Student();
     student.setStudentId("1");
     student.setName("鈴木大介");
@@ -130,6 +130,24 @@ class StudentRepositoryTest {
     assertEquals(student.getCity(), sut.searchStudentById("1").getCity());
     assertEquals(student.getAge(), sut.searchStudentById("1").getAge());
     assertEquals(student.getGender(), sut.searchStudentById("1").getGender());
+  }
+
+  @Test
+  void 受講生コース情報の更新が行えること(){
+    StudentCourse studentCourse = new StudentCourse();
+    studentCourse.setCourseId("101");
+    studentCourse.setStudentId("1");
+    studentCourse.setCourseName("テストコース");
+
+    sut.updateStudentCourse(studentCourse);
+
+    StudentCourse updateCourse = sut.searchStudentCourseListById("1")
+        .stream().filter(course -> course.getCourseId().equals("101"))
+        .findFirst()
+        .orElseThrow();
+
+    assertEquals(studentCourse.getCourseName(), updateCourse.getCourseName());
+
   }
 
 }
