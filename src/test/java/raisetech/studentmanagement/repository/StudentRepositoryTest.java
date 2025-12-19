@@ -53,6 +53,24 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void 受講生IDに紐づく受講生コース情報の検索が行えること(){
+    StudentCourse studentCourse1 = new StudentCourse();
+    studentCourse1.setCourseId("101");
+    studentCourse1.setCourseName("Java基礎");
+
+    StudentCourse studentCourse2 = new StudentCourse();
+    studentCourse2.setCourseId("102");
+    studentCourse2.setCourseName("Spring Boot入門");
+
+    List<StudentCourse> expected = List.of(studentCourse1, studentCourse2);
+
+    List<StudentCourse> actual = sut.searchStudentCourseListById("1");
+
+    assertEquals(expected.get(0).getCourseName(), actual.get(0).getCourseName());
+    assertEquals(expected.get(1).getCourseName(), actual.get(1).getCourseName());
+  }
+
+  @Test
   void 受講生の登録が行えること(){
     Student student = new Student();
     student.setStudentId("test-id-123");
