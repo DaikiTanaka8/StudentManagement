@@ -20,4 +20,26 @@ class StudentRepositoryTest {
     List<Student> actual = sut.searchStudent();
     assertThat(actual.size()).isEqualTo(4);
   }
+
+  @Test
+  void 受講生の登録が行えること(){
+    Student student = new Student();
+    student.setStudentId("test-id-123");
+    student.setName("テスト太郎");
+    student.setFurigana("てすとたろう");
+    student.setNickname("テストさん");
+    student.setEmail("test@example.com");
+    student.setCity("東京");
+    student.setAge(100);
+    student.setGender("その他");
+    student.setRemark("");
+
+    sut.registerStudent(student);
+
+    List<Student> actual = sut.searchStudent();
+
+    //MEMO: 登録後studentsの数が1つ増えているということを確認する。
+    assertThat(actual.size()).isEqualTo(5);
+  }
+
 }
