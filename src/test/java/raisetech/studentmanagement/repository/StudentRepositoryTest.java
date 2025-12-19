@@ -109,4 +109,27 @@ class StudentRepositoryTest {
     assertThat(actual.size()).isEqualTo(11);
   }
 
+  @Test
+  void 受講生更新が行えること(){
+    Student student = new Student();
+    student.setStudentId("1");
+    student.setName("鈴木大介");
+    student.setFurigana("すずきだいすけ");
+    student.setNickname("ブルドーザー");
+    student.setEmail("suzuki@example.com");
+    student.setCity("東京都");
+    student.setAge(51);
+    student.setGender("男性");
+
+    sut.updateStudent(student);
+
+    assertEquals(student.getName(), sut.searchStudentById("1").getName());
+    assertEquals(student.getFurigana(), sut.searchStudentById("1").getFurigana());
+    assertEquals(student.getNickname(), sut.searchStudentById("1").getNickname());
+    assertEquals(student.getEmail(), sut.searchStudentById("1").getEmail());
+    assertEquals(student.getCity(), sut.searchStudentById("1").getCity());
+    assertEquals(student.getAge(), sut.searchStudentById("1").getAge());
+    assertEquals(student.getGender(), sut.searchStudentById("1").getGender());
+  }
+
 }
