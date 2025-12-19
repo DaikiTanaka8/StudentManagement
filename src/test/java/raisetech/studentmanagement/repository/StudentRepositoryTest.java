@@ -3,6 +3,7 @@ package raisetech.studentmanagement.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
@@ -89,6 +90,23 @@ class StudentRepositoryTest {
 
     //MEMO: 登録後studentsの数が1つ増えているということを確認する。
     assertThat(actual.size()).isEqualTo(5);
+  }
+
+  @Test
+  void 受講生コース情報の登録が行えること(){
+    StudentCourse studentCourse = new StudentCourse();
+    studentCourse.setCourseId("test-id-123");
+    studentCourse.setStudentId("test-id-789");
+    studentCourse.setCourseName("テストコース");
+    studentCourse.setStartDate(LocalDate.parse("2025-01-01"));
+    studentCourse.setEndDate(LocalDate.parse("2026-01-01"));
+
+    sut.registerStudentCourse(studentCourse);
+
+    List<StudentCourse> actual = sut.searchStudentCourseList();
+
+    //MEMO: 登録後students_coursesの数が1つ増えているということを確認する。
+    assertThat(actual.size()).isEqualTo(11);
   }
 
 }
