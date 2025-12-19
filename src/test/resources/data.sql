@@ -1,7 +1,7 @@
 INSERT INTO students(student_id,name, furigana, nickname, email, city, age, gender)
-VALUES('1', '鈴木大介', 'すずきだいすけ', 'だいちゃん', 'suzuki@example.com', '東京都', 51, '男性')
-      ('2', '中田花奈', 'なかだかな', 'かなりん', 'nakada@example.com', '埼玉県', 31, '女性')
-      ('3', '下石戟', 'しもいしげき', 'しもいし', 'shimoisshi@example.com', '滋賀県', 38, '男性')
+VALUES('1', '鈴木大介', 'すずきだいすけ', 'だいちゃん', 'suzuki@example.com', '東京都', 51, '男性'),
+      ('2', '中田花奈', 'なかだかな', 'かなりん', 'nakada@example.com', '埼玉県', 31, '女性'),
+      ('3', '下石戟', 'しもいしげき', 'しもいし', 'shimoisshi@example.com', '滋賀県', 38, '男性'),
       ('4', '東城りお', 'とうじょうりお', 'りお', 'tojo@example.com', '秋田県', 35, '女性');
 
 INSERT INTO students_courses (course_id, student_id, course_name, start_date, end_date)
