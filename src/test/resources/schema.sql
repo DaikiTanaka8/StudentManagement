@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS students (
   age INT DEFAULT NULL,
   gender VARCHAR(100) DEFAULT NULL,
   remark VARCHAR(255) DEFAULT NULL,
-  is_deleted tinyint(1) NOT NULL DEFAULT '0',
+  is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
   PRIMARY KEY (student_id)
 );
 
