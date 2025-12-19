@@ -22,6 +22,30 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void 受講生のID検索が行えること(){
+    Student expected = new Student();
+    expected.setStudentId("1");
+    expected.setName("鈴木大介");
+    expected.setFurigana("すずきだいすけ");
+    expected.setNickname("だいちゃん");
+    expected.setEmail("suzuki@example.com");
+    expected.setCity("東京都");
+    expected.setAge(51);
+    expected.setGender("男性");
+
+    Student actual = sut.searchStudentById("1");
+
+    assertEquals(expected.getName(), actual.getName());
+    assertEquals(expected.getFurigana(), actual.getFurigana());
+    assertEquals(expected.getNickname(), actual.getNickname());
+    assertEquals(expected.getEmail(), actual.getEmail());
+    assertEquals(expected.getCity(), actual.getCity());
+    assertEquals(expected.getAge(), actual.getAge());
+    assertEquals(expected.getGender(), actual.getGender());
+
+  }
+
+  @Test
   void 受講生の登録が行えること(){
     Student student = new Student();
     student.setStudentId("test-id-123");
