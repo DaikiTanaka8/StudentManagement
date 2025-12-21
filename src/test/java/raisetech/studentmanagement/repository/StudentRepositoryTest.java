@@ -176,7 +176,7 @@ class StudentRepositoryTest {
         .findFirst()
         .orElseThrow();
 
-    assertEquals(studentCourse.getCourseName(), updateCourse.getCourseName());
+    assertThat(updateCourse.getCourseName()).isEqualTo(studentCourse.getCourseName());
 
   }
 
