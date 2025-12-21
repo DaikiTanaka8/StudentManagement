@@ -41,13 +41,25 @@ class StudentRepositoryTest {
 
     Student actual = sut.searchStudentById("1");
 
-    assertEquals(expected.getName(), actual.getName());
-    assertEquals(expected.getFurigana(), actual.getFurigana());
-    assertEquals(expected.getNickname(), actual.getNickname());
-    assertEquals(expected.getEmail(), actual.getEmail());
-    assertEquals(expected.getCity(), actual.getCity());
-    assertEquals(expected.getAge(), actual.getAge());
-    assertEquals(expected.getGender(), actual.getGender());
+    assertThat(actual)
+        .extracting( //MEMO: オブジェクト → 比較用の値リストに変換。
+            Student::getName, //MEMO: 「student -> student.getName()」と同じ意味。
+            Student::getFurigana,
+            Student::getNickname,
+            Student::getEmail,
+            Student::getCity,
+            Student::getAge,
+            Student::getGender
+        )
+        .containsExactly( //MEMO: // 「順番・中身・数すべて一致」かどうか検証している。
+            expected.getName(),
+            expected.getFurigana(),
+            expected.getNickname(),
+            expected.getEmail(),
+            expected.getCity(),
+            expected.getAge(),
+            expected.getGender()
+        );
 
   }
 
