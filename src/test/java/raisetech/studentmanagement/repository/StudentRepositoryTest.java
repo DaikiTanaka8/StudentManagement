@@ -83,8 +83,8 @@ class StudentRepositoryTest {
 
     List<StudentCourse> actual = sut.searchStudentCourseListById("1");
 
-    assertEquals(expected.get(0).getCourseName(), actual.get(0).getCourseName());
-    assertEquals(expected.get(1).getCourseName(), actual.get(1).getCourseName());
+    assertThat(actual.get(0).getCourseName()).isEqualTo(expected.get(0).getCourseName());
+    assertThat(actual.get(1).getCourseName()).isEqualTo(expected.get(1).getCourseName());
   }
 
   @Test
