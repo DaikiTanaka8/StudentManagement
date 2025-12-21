@@ -83,8 +83,12 @@ class StudentRepositoryTest {
 
     List<StudentCourse> actual = sut.searchStudentCourseListById("1");
 
-    assertThat(actual.get(0).getCourseName()).isEqualTo(expected.get(0).getCourseName());
-    assertThat(actual.get(1).getCourseName()).isEqualTo(expected.get(1).getCourseName());
+    assertThat(actual)
+        .extracting(StudentCourse::getCourseName)
+        .containsExactly(
+            "Java基礎",
+            "Spring Boot入門"
+        );
   }
 
   @Test
