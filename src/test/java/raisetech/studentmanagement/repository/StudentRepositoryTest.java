@@ -22,13 +22,13 @@ class StudentRepositoryTest {
   private StudentRepository sut;
 
   @Test
-  void 受講生の全件検索が行えること(){
+  void 受講生の全件検索が行えること() {
     List<Student> actual = sut.searchStudent();
     assertThat(actual.size()).isEqualTo(4);
   }
 
   @Test
-  void 受講生のID検索が行えること(){
+  void 受講生のID検索が行えること() {
     Student expected = new Student();
     expected.setStudentId("1");
     expected.setName("鈴木大介");
@@ -64,13 +64,13 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生コース情報の全件検索が行えること(){
+  void 受講生コース情報の全件検索が行えること() {
     List<StudentCourse> actual = sut.searchStudentCourseList();
     assertThat(actual.size()).isEqualTo(10);
   }
 
   @Test
-  void 受講生IDに紐づく受講生コース情報の検索が行えること(){
+  void 受講生IDに紐づく受講生コース情報の検索が行えること() {
     StudentCourse studentCourse1 = new StudentCourse();
     studentCourse1.setCourseId("101");
     studentCourse1.setCourseName("Java基礎");
@@ -88,7 +88,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生の登録が行えること(){
+  void 受講生の登録が行えること() {
     Student student = new Student();
     student.setStudentId("test-id-123");
     student.setName("テスト太郎");
@@ -109,7 +109,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生コース情報の登録が行えること(){
+  void 受講生コース情報の登録が行えること() {
     StudentCourse studentCourse = new StudentCourse();
     studentCourse.setCourseId("test-id-123");
     studentCourse.setStudentId("test-id-789");
@@ -126,7 +126,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生の更新が行えること(){
+  void 受講生の更新が行えること() {
     Student student = new Student();
     student.setStudentId("1");
     student.setName("鈴木大介");
@@ -139,17 +139,31 @@ class StudentRepositoryTest {
 
     sut.updateStudent(student);
 
-    assertEquals(student.getName(), sut.searchStudentById("1").getName());
-    assertEquals(student.getFurigana(), sut.searchStudentById("1").getFurigana());
-    assertEquals(student.getNickname(), sut.searchStudentById("1").getNickname());
-    assertEquals(student.getEmail(), sut.searchStudentById("1").getEmail());
-    assertEquals(student.getCity(), sut.searchStudentById("1").getCity());
-    assertEquals(student.getAge(), sut.searchStudentById("1").getAge());
-    assertEquals(student.getGender(), sut.searchStudentById("1").getGender());
+    Student searchStudentById = sut.searchStudentById("1");
+
+    assertThat(searchStudentById)
+        .extracting(
+            Student::getName,
+            Student::getFurigana,
+            Student::getNickname,
+            Student::getEmail,
+            Student::getCity,
+            Student::getAge,
+            Student::getGender
+        )
+        .containsExactly(
+            student.getName(),
+            student.getFurigana(),
+            student.getNickname(),
+            student.getEmail(),
+            student.getCity(),
+            student.getAge(),
+            student.getGender()
+        );
   }
 
   @Test
-  void 受講生コース情報の更新が行えること(){
+  void 受講生コース情報の更新が行えること() {
     StudentCourse studentCourse = new StudentCourse();
     studentCourse.setCourseId("101");
     studentCourse.setStudentId("1");
@@ -167,7 +181,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生の論理削除が行えること(){
+  void 受講生の論理削除が行えること() {
 
     sut.localDeleteStudent("1");
 
