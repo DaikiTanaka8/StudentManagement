@@ -8,10 +8,14 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 
-@MybatisTest
+@MybatisTest //MEMO: ←これだけで自動でロールバックされているのでは…？
+@Transactional //MEMO: 各テスト終了後、自動でロールバックする設定。
+@Rollback //MEMO: これは明示するために記載。
 class StudentRepositoryTest {
 
   @Autowired
