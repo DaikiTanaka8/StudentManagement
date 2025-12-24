@@ -39,6 +39,19 @@ public interface StudentRepository {
   List<StudentCourse> searchStudentCourseListById(String studentId);
 
   /**
+   * コーズ情報に対するコースの申込状況の全件検索を行います。
+   * @return コースの申込状況一覧（全件）。
+   */
+  List<CourseApplicationStatus> searchCourseApplicationStatus();
+
+  /**
+   * 受講生コース情報IDに紐づくコースの申込状況を検索します。
+   * @param statusId 申込状況ID
+   * @return 受講生コース情報IDに紐づくコースの申込状況。
+   */
+  CourseApplicationStatus searchCourseApplicationStatusById(String statusId);
+
+  /**
    * 受講生を新規登録します。IDに関しては自動採番を行う（UUID）。
    * @param student 受講生
    */
