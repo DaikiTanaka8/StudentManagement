@@ -39,7 +39,7 @@ public interface StudentRepository {
   List<StudentCourse> searchStudentCourseListById(String studentId);
 
   /**
-   * コーズ情報に対するコースの申込状況の全件検索を行います。
+   * コース情報に対するコースの申込状況の全件検索を行います。
    * @return コースの申込状況一覧（全件）。
    */
   List<CourseApplicationStatus> searchCourseApplicationStatus();
