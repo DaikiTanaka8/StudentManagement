@@ -5,8 +5,6 @@
 
 <mapper namespace="raisetech.studentmanagement.repository.StudentRepository">
 
-  <!-- ここに select / insert / update / delete を書く -->
-
   <!--受講生の全件検索。-->
   <select id="searchStudent" resultType="raisetech.studentmanagement.data.Student">
     SELECT * FROM students WHERE is_deleted = false
