@@ -10,8 +10,9 @@ import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
+import raisetech.studentmanagement.data.StudentCourseStatus;
 
-@MybatisTest //MEMO: ←これだけで自動でロールバックされている。
+@MybatisTest // この記載のみで自動でロールバックされる。
 class StudentRepositoryTest {
 
   @Autowired
@@ -85,6 +86,12 @@ class StudentRepositoryTest {
             "Java基礎",
             "Spring Boot入門"
         );
+  }
+
+  @Test
+  void コース申込状況の全件検索が行えること(){
+    List<StudentCourseStatus> actual = sut.searchStudentCourseStatus();
+    assertThat(actual.size()).isEqualTo(??//MEMO:ここでTestの仮データを入力しなければいけないことに気づく)
   }
 
   @Test
