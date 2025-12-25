@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS students_courses (
 );
 
 CREATE TABLE IF NOT EXISTS students_courses_status (
-status_id VARCHAR(36) NOT NULL,
-course_id VARCHAR(36) NOT NULL,
-status VARCHAR(50) NOT NULL
-PRIMARY KEY (status_id)
+  status_id VARCHAR(36) NOT NULL,
+  course_id VARCHAR(36) NOT NULL,
+  status VARCHAR(50) NOT NULL,
+  PRIMARY KEY (status_id)
 );

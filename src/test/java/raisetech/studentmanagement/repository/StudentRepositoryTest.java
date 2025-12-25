@@ -91,7 +91,7 @@ class StudentRepositoryTest {
   @Test
   void コース申込状況の全件検索が行えること(){
     List<StudentCourseStatus> actual = sut.searchStudentCourseStatus();
-    assertThat(actual.size()).isEqualTo(??//MEMO:ここでTestの仮データを入力しなければいけないことに気づく)
+    assertThat(actual.size()).isEqualTo(10);
   }
 
   @Test
