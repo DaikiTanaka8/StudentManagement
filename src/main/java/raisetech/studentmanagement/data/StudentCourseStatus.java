@@ -7,9 +7,9 @@ import lombok.Setter;
 @Schema(description = "コースの申込状況")
 @Setter
 @Getter
-public class CourseApplicationStatus {
+public class StudentCourseStatus {
 
   private String statusId;
   private String courseId;
-  private String ApplicationStatus;
+  private String status;
 }

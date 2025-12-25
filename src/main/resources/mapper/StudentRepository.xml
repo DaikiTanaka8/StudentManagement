@@ -3,18 +3,16 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- //MEMO: ここには対応するRepositoryの完全修飾名を書きます（package + クラス名）。-->
 <mapper namespace="raisetech.studentmanagement.repository.StudentRepository">
 
   <!-- ここに select / insert / update / delete を書く -->
 
-  <!--受講生の全件検索。//MEMO: 「WHERE is_deleted = false」で削除されていないものが表示される。-->
+  <!--受講生の全件検索。-->
   <select id="searchStudent" resultType="raisetech.studentmanagement.data.Student">
-    <!-- //MEMO: idはRepositoryのメソッド名。resultTypeはフルパスを指定しないと動かない。 -->
     SELECT * FROM students WHERE is_deleted = false
   </select>
 
-  <!--受講生の検索。//MEMO: 受講生情報のID検索。IDで単一の受講生を取得してくる。-->
+  <!--受講生の検索。-->
   <select id="searchStudentById" resultType="raisetech.studentmanagement.data.Student">
     SELECT * FROM students WHERE student_id = #{studentId} AND is_deleted = false
   </select>
@@ -27,6 +25,16 @@
   <!--受講生IDに紐づくコース情報の検索。-->
   <select id="searchStudentCourseListById" resultType="raisetech.studentmanagement.data.StudentCourse">
     SELECT * FROM students_courses WHERE student_id = #{studentId}
+  </select>
+
+  <!--コース申込状況の全件検索。-->
+  <select id="searchStudentCourseStatus" resultType="raisetech.studentmanagement.data.StudentCourseStatus">
+    SELECT * FROM students_courses_status
+  </select>
+
+  <!--コースIDに紐づくコース申込状況の検索。-->
+  <select id="searchStudentCourseStatusById" resultType="raisetech.studentmanagement.data.StudentCourseStatus">
+    SELECT * FROM students_courses_status WHERE course_id = #{courseId}
   </select>
 
   <!--受講生を新規登録します。IDに関しては自動採番を行う（UUID）。//MEMO: INSERTだから登録した後何も返さない→resultTYpeが不要。-->
