@@ -96,24 +96,14 @@ class StudentRepositoryTest {
 
   @Test
   void コースIDに紐づくコース申込状況の検索が行えること() {
-    StudentCourse studentCourse1 = new StudentCourse();
-    studentCourse1.setCourseId("101");
-    studentCourse1.setCourseName("Java基礎");
+    StudentCourseStatus expected = new StudentCourseStatus();
+    expected.setStatusId("201");
+    expected.setCourseId("101");
+    expected.setStatus("仮申込");
 
-    StudentCourse studentCourse2 = new StudentCourse();
-    studentCourse2.setCourseId("102");
-    studentCourse2.setCourseName("Spring Boot入門");
+    StudentCourseStatus actual = sut.searchStudentCourseStatusById("101");
 
-    List<StudentCourse> expected = List.of(studentCourse1, studentCourse2);
-
-    List<StudentCourse> actual = sut.searchStudentCourseListById("1");
-
-    assertThat(actual)
-        .extracting(StudentCourse::getCourseName)
-        .containsExactly(
-            "Java基礎",
-            "Spring Boot入門"
-        );
+    assertThat(actual.getStatus()).isEqualTo(expected.getStatus());
   }
 
   @Test
