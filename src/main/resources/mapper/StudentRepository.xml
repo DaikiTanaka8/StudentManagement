@@ -35,7 +35,7 @@
     SELECT * FROM students_courses_status WHERE course_id = #{courseId}
   </select>
 
-  <!--受講生を新規登録します。IDに関しては自動採番を行う（UUID）。//MEMO: INSERTだから登録した後何も返さない→resultTYpeが不要。-->
+  <!--受講生を新規登録します。IDに関しては自動採番を行う（UUID）。-->
   <insert id="registerStudent">
     INSERT INTO students(student_id,name, furigana, nickname, email, city, age, gender, remark)
     VALUES(#{studentId}, #{name}, #{furigana}, #{nickname}, #{email}, #{city}, #{age}, #{gender}, #{remark})
