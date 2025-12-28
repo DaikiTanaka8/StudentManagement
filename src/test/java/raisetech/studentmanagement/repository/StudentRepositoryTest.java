@@ -95,6 +95,28 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void コースIDに紐づくコース申込状況の検索が行えること() {
+    StudentCourse studentCourse1 = new StudentCourse();
+    studentCourse1.setCourseId("101");
+    studentCourse1.setCourseName("Java基礎");
+
+    StudentCourse studentCourse2 = new StudentCourse();
+    studentCourse2.setCourseId("102");
+    studentCourse2.setCourseName("Spring Boot入門");
+
+    List<StudentCourse> expected = List.of(studentCourse1, studentCourse2);
+
+    List<StudentCourse> actual = sut.searchStudentCourseListById("1");
+
+    assertThat(actual)
+        .extracting(StudentCourse::getCourseName)
+        .containsExactly(
+            "Java基礎",
+            "Spring Boot入門"
+        );
+  }
+
+  @Test
   void 受講生の登録が行えること() {
     Student student = new Student();
     student.setStudentId("test-id-123");
