@@ -64,6 +64,11 @@
     UPDATE students_courses SET course_name = #{courseName} WHERE course_id = #{courseId}
   </update>
 
+  <!--コース申込状況を更新します-->
+  <update id="updateStudentCourseStatus">
+    UPDATE students_courses_status SET stats = #{status} WHERE status_id = #{statusId}
+  </update>
+
   <!--受講生を削除（論理削除）します。-->
   <update id="localDeleteStudent">
     UPDATE students SET is_deleted = true WHERE student_id = #{studentId}

@@ -83,6 +83,12 @@ public interface StudentRepository {
   void updateStudentCourse(StudentCourse studentCourse);
 
   /**
+   * コース申込状況を更新します。
+   * @param studentCourseStatus コース申込状況
+   */
+  void updateStudentCourseStatus(StudentCourseStatus studentCourseStatus);
+
+  /**
    * 受講生を削除（論理削除）します。
    * @param studentId 受講生ID
    */
