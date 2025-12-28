@@ -47,6 +47,12 @@
     VALUES(#{courseId}, #{studentId}, #{courseName}, #{startDate}, #{endDate})
   </insert>
 
+  <!--コース申込状況を新規登録します。IDに関しては自動採番を行う（UUID）。-->
+  <insert id="registerStudentCourseStatus">
+    INSERT INTO students_courses_status(status_id, course_id, status)
+    VALUES(#{statusId}, #{courseId}, #{status})
+  </insert>
+
   <!--受講生を更新します-->
   <update id="updateStudent">
     UPDATE students SET name = #{name}, furigana = #{furigana}, nickname = #{nickname}, email = #{email},
