@@ -215,6 +215,19 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void コース申込状況の更新が行えること() {
+    StudentCourseStatus studentCourseStatus = new StudentCourseStatus();
+    studentCourseStatus.setStatusId("201");
+    studentCourseStatus.setStatus("本申込");
+    sut.updateStudentCourseStatus(studentCourseStatus);
+
+    StudentCourseStatus searchStudentCourseStatusById = sut.searchStudentCourseStatusById("101");
+
+    assertThat(searchStudentCourseStatusById.getStatus()).isEqualTo("本申込");
+
+  }
+
+  @Test
   void 受講生の論理削除が行えること() {
 
     sut.localDeleteStudent("1");
