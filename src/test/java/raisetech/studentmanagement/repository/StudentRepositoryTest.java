@@ -145,6 +145,21 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void コース申込状況の登録が行えること() {
+    StudentCourseStatus studentCourseStatus = new StudentCourseStatus();
+    studentCourseStatus.setStatusId("test-id-201");
+    studentCourseStatus.setCourseId("test-id-101");
+    studentCourseStatus.setStatus("受講中");
+
+    sut.registerStudentCourseStatus(studentCourseStatus);
+
+    List<StudentCourseStatus> actual = sut.searchStudentCourseStatus();
+
+    // 登録後students_courses_statusの数が1つ増えている(10->11)ということを確認。
+    assertThat(actual.size()).isEqualTo(11);
+  }
+
+  @Test
   void 受講生の更新が行えること() {
     Student student = new Student();
     student.setStudentId("1");
