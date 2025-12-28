@@ -221,7 +221,6 @@ class StudentRepositoryTest {
 
     List<Student> actual = sut.searchStudent();
 
-    //MEMO: 登録後studentsの数が1つ減っているということを確認する。
     assertThat(actual.size()).isEqualTo(3);
   }
 
