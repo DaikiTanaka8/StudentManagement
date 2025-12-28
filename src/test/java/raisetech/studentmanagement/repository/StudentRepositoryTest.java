@@ -123,7 +123,7 @@ class StudentRepositoryTest {
 
     List<Student> actual = sut.searchStudent();
 
-    //MEMO: 登録後studentsの数が1つ増えているということを確認する。
+    // 登録後studentsの数が1つ増えている(4->5)ということを確認する。
     assertThat(actual.size()).isEqualTo(5);
   }
 
@@ -140,7 +140,7 @@ class StudentRepositoryTest {
 
     List<StudentCourse> actual = sut.searchStudentCourseList();
 
-    //MEMO: 登録後students_coursesの数が1つ増えているということを確認する。
+    // 登録後students_coursesの数が1つ増えている(10->11)ということを確認する。
     assertThat(actual.size()).isEqualTo(11);
   }
 
@@ -155,7 +155,7 @@ class StudentRepositoryTest {
 
     List<StudentCourseStatus> actual = sut.searchStudentCourseStatus();
 
-    // 登録後students_courses_statusの数が1つ増えている(10->11)ということを確認。
+    // 登録後students_courses_statusの数が1つ増えている(10->11)ということを確認する。
     assertThat(actual.size()).isEqualTo(11);
   }
 
