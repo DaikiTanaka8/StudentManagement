@@ -14,18 +14,17 @@ import raisetech.studentmanagement.repository.StudentRepository;
 
 /**
  * 受講生情報を取り扱うサービスです。 受講生の検索や登録・更新処理を行います。
- *  //MEMO: 業務処理：コントローラーがリクエストを受け取る→☆サービスは具体的な処理を行う。→DBで呼び出す。
+ *
  */
-@Service //MEMO: これをつけることでSpringが認識してくれる。
+@Service
 public class StudentService {
 
-  private StudentRepository repository;
-  private StudentConverter converter;
+  private final StudentRepository repository;
+  private final StudentConverter converter;
 
-  @Autowired //MEMO: Springが管理しているインスタンスやクラスを自動で管理してくれる。自動でインスタンス生成したり→自分でnewしなくて済むからコードがキレイ。コンストラクタインジェクション。
-  public StudentService(StudentRepository repository,
-      StudentConverter converter) { //MEMO: 上で書いた「private StudentRepository repository;」を呼び出すためにコンストラクターを生成している。インスタンス化する直前で書いている。
-    this.repository = repository;   // ↑この引数は誰がどうやって持たせる？→newしてないのに使えているのは、SpringBootが自動で生成している。
+  @Autowired
+  public StudentService(StudentRepository repository, StudentConverter converter) {
+    this.repository = repository;
     this.converter = converter;
   }
 
@@ -36,9 +35,8 @@ public class StudentService {
    */
   public List<StudentDetail> searchStudentList() {
     List<Student> studentList = repository.searchStudent();
-    List<StudentCourse> studentCourseList = repository.searchStudentCourseList(); //MEMO: この行と一つ上の行でで受講生情報と受講生コース情報の全件が取れてきている。
+    List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
     return converter.convertStudentDetails(studentList, studentCourseList);
-    //MEMO: 「convertStudentDetails」→引数のstudentListとstudentCoursesListで全件取得を引っ張ってきて、それをコンバートしている。
   }
 
   /**

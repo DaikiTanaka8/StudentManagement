@@ -6,7 +6,6 @@ import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,30 +18,24 @@ import raisetech.studentmanagement.data.StudentCourse;
 import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.repository.StudentRepository;
 
-@ExtendWith(MockitoExtension.class) //MEMO: これをつけてMockitoが使えるようになる。
+@ExtendWith(MockitoExtension.class)
 class StudentServiceTest {
 
   @Mock
-  private StudentRepository repository; //MEMO:これでリポジトリがMock化される。
+  private StudentRepository repository;
 
   @Mock
-  private StudentConverter converter; //MEMO:これでコンバーターがMock化される。
+  private StudentConverter converter;
 
-  private StudentService sut; //MEMO: テスト対象は「sut」と書くことが多い。テスト対象が変わらないので、クラス全体でsutを定義しちゃう。
+  private StudentService sut;
 
-  @BeforeEach //MEMO: テストする度に動く。毎回生成してくれる。
+  @BeforeEach
   void before(){
-    sut = new StudentService(repository, converter); //MEMO: Mock化されたリポジトリとコンバーターを与える。
+    sut = new StudentService(repository, converter);
   }
 
   @Test
-  //MEMO: publicは省略してしまっていい（動くから）。テストしたいだけだからvoid。
-  //MEMO: テストメソッドは日本語で書いていい。
-  //MEMO:元々は「全件検索が動作すること」であったが、searchStudentListの中身を見ると、
-  // 「searchStudentでリポジトリを呼び出している」「searchStudentCourseでリポジトリを呼び出している」「convertStudentDetailsでコンバートしている」の３つ。
-  // →すなわち、リポジトリが呼び出せていることとコンバーターの処理が適切に呼び出していることをテストできれば良い。
   void 受講生詳細の一覧検索_リポジトリとコンバーターの処理が適切に呼び出せていること(){
-
     // 事前準備
     List<Student> studentList = new ArrayList<>();
     List<StudentCourse> studentCourseList = new ArrayList<>();
