@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import raisetech.studentmanagement.controller.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
+import raisetech.studentmanagement.data.StudentCourseStatus;
 import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.repository.StudentRepository;
 
@@ -36,6 +37,7 @@ public class StudentService {
   public List<StudentDetail> searchStudentList() {
     List<Student> studentList = repository.searchStudent();
     List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
+    List<StudentCourseStatus> studentCourseStatusList = repository.searchStudentCourseStatus();
     return converter.convertStudentDetails(studentList, studentCourseList);
   }
 
