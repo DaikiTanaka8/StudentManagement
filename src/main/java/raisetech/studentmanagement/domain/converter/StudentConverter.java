@@ -1,4 +1,4 @@
-package raisetech.studentmanagement.controller.converter;
+package raisetech.studentmanagement.domain.converter;
 //MEMO: StudentControllerの中でやっていたコンバーターなので、パッケージングがコントローラーの中にコンバーターを作っている。
 
 import java.util.ArrayList;
