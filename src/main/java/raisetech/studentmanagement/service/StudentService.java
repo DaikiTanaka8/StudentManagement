@@ -41,15 +41,14 @@ public class StudentService {
   }
 
   /**
-   * 受講生詳細検索です。//MEMO: IDに紐づく受講生情報を取得した後、その受講生に紐づく受講生コース情報を取得して設定します。 講義30でつくったやつ。
+   * 受講生詳細検索です。
    *
    * @param studentId 受講生ID
    * @return IDで検索した受講生詳細情報（単一の受講生情報）+受講生コース情報。（StudentDetailで返っている！）
    */
   public StudentDetail searchStudentById(String studentId) {
     Student student = repository.searchStudentById(studentId);
-    List<StudentCourse> studentCourseList = repository.searchStudentCourseListById(
-        student.getStudentId());
+    List<StudentCourse> studentCourseList = repository.searchStudentCourseListById(student.getStudentId());
     return new StudentDetail(student, studentCourseList);
   }
 
