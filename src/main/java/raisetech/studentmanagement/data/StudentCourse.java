@@ -19,5 +19,6 @@ public class StudentCourse {
 
   private LocalDate startDate;
   private LocalDate endDate;
+  private StudentCourseStatus status;
 
 }
