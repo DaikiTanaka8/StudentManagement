@@ -1,11 +1,14 @@
 package raisetech.studentmanagement.service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import raisetech.studentmanagement.data.StudentCourseStatus;
 import raisetech.studentmanagement.domain.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
@@ -26,6 +29,29 @@ public class StudentService {
   public StudentService(StudentRepository repository, StudentConverter converter) {
     this.repository = repository;
     this.converter = converter;
+  }
+
+  /**
+   * 受講生コース情報とcourseIdをキーにした申込状況を結合します。
+   *
+   * @return コース申込状況を含んだ受講生コースリスト。
+   */
+
+  public List<StudentCourse> studentCourseListWithStatus(){
+    List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
+    List<StudentCourseStatus> studentCourseStatusList =repository.searchStudentCourseStatus();
+
+    Map<String, StudentCourseStatus> studentCourseStatusMap = new HashMap<>();
+
+    for(StudentCourseStatus studentCourseStatus : studentCourseStatusList){
+      studentCourseStatusMap.put(studentCourseStatus.getCourseId() , studentCourseStatus);
+    }
+
+    for (StudentCourse studentCourse : studentCourseList){
+      studentCourse.setStatus(studentCourseStatusMap.get(studentCourse.getCourseId()));
+    }
+
+    return studentCourseList;
   }
 
   /**
