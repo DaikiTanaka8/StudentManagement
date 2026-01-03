@@ -66,10 +66,21 @@ public class StudentService {
   }
 
   /**
+   * 申込状況を含む受講生詳細の一覧検索です。 全件検索を行うので、条件指定は行いません。
+   *
+   * @return 申込状況を含む受講生詳細一覧（全件）。全件検索した受講生詳細情報一覧
+   */
+  public List<StudentDetail> searchStudentListWithStatus() {
+    List<Student> studentList = repository.searchStudent();
+    List<StudentCourse> studentCourseList = studentCourseListWithStatus();
+    return converter.convertStudentDetails(studentList, studentCourseList);
+  }
+
+  /**
    * 受講生詳細検索です。
    *
    * @param studentId 受講生ID
-   * @return IDで検索した受講生詳細情報（単一の受講生情報）+受講生コース情報。（StudentDetailで返っている！）
+   * @return IDで検索した受講生詳細情報（単一の受講生情報+受講生コース情報）。
    */
   public StudentDetail searchStudentById(String studentId) {
     Student student = repository.searchStudentById(studentId);
