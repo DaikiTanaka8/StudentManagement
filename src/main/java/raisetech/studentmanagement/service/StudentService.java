@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import javax.management.remote.SubjectDelegationPermission;
+import javax.security.auth.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +34,7 @@ public class StudentService {
   }
 
   /**
-   * 受講生コース情報とcourseIdをキーにした申込状況を結合します。
+   * 受講生コース情報（全件）とcourseIdをキーにした申込状況を結合します。
    *
    * @return コース申込状況を含んだ受講生コースリスト。
    */
@@ -85,6 +87,24 @@ public class StudentService {
   public StudentDetail searchStudentById(String studentId) {
     Student student = repository.searchStudentById(studentId);
     List<StudentCourse> studentCourseList = repository.searchStudentCourseListById(student.getStudentId());
+    return new StudentDetail(student, studentCourseList);
+  }
+
+  /**
+   * 受講生詳細検索です。コース申込状況が一緒になった受講生コース情報が取得されます。
+   *
+   * @param studentId 受講生ID
+   * @return IDで検索した受講生詳細情報（単一の受講生情報+受講生コース情報+コース申込状況）。
+   */
+  public StudentDetail searchStudentByIdWithStatus(String studentId) {
+    Student student = repository.searchStudentById(studentId);
+    List<StudentCourse> studentCourseList = repository.searchStudentCourseListById(student.getStudentId());
+
+    for (StudentCourse studentCourse : studentCourseList){
+      StudentCourseStatus status = repository.searchStudentCourseStatusById(studentCourse.getCourseId());
+      studentCourse.setStatus(status);
+    }
+
     return new StudentDetail(student, studentCourseList);
   }
 
