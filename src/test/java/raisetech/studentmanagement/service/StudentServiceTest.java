@@ -83,6 +83,22 @@ class StudentServiceTest {
     assertThat(actual.get(0).getStatus().getStatus()).isEqualTo("仮申込");
   }
 
+  //TODO: テスト通っていない。Spyを使うように進められたが、BeforeEachでRepositoryを毎回newしているのでうまくいかない。
+  @Test
+  void 申込状況を含む受講生詳細の一覧検索_リポジトリとコンバーターの処理が適切に呼び出せていること(){
+      List<Student> studentList = List.of(new Student());
+      List<StudentCourse> studentCourseList = List.of(new StudentCourse());
+      List<StudentDetail> expected = List.of(new StudentDetail());
+
+      Mockito.when(repository.searchStudent()).thenReturn(studentList);
+      Mockito.doReturn(studentCourseList).when(sut).studentCourseListWithStatus();
+      Mockito.when(converter.convertStudentDetails(studentList, studentCourseList)).thenReturn(expected);
+
+      List<StudentDetail> actual = sut.searchStudentListWithStatus();
+
+      assertThat(actual).isSameAs(expected);
+  }
+
   @Test
   void 受講生詳細検索_リポジトリの呼び出しが適切に動作していること(){
     // 事前準備
