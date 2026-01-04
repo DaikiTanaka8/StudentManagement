@@ -1,5 +1,6 @@
 package raisetech.studentmanagement.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import raisetech.studentmanagement.data.StudentCourseStatus;
 import raisetech.studentmanagement.domain.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
@@ -56,6 +58,29 @@ class StudentServiceTest {
     // Assertions.assertEquals(expected, actual); //MEMO: expectedとactualがイコールならテスト完了、ということ。
 
     // 後処理（DBに変更を加える場合は、DBをきれいにする必要がある。）
+  }
+
+  @Test
+  void 受講生コース情報と申込状況がcourseIdを用いて結合されていること(){
+    StudentCourse course1 = new StudentCourse();
+    course1.setCourseId("test-id-123");
+    course1.setCourseName("テストコース");
+
+    StudentCourseStatus status1 = new StudentCourseStatus();
+    status1.setStatusId("test-statusId-789");
+    status1.setCourseId("test-id-123");
+    status1.setStatus("仮申込");
+
+    List<StudentCourse> studentCourseList = List.of(course1);
+    List<StudentCourseStatus> studentCourseStatusList = List.of(status1);
+    Mockito.when(repository.searchStudentCourseList()).thenReturn(studentCourseList);
+    Mockito.when(repository.searchStudentCourseStatus()).thenReturn(studentCourseStatusList);
+
+    List<StudentCourse> actual = sut.studentCourseListWithStatus();
+
+    assertThat(actual.get(0).getStatus()).isNotNull();
+    assertThat(actual.get(0).getStatus().getCourseId()).isEqualTo("test-id-123");
+    assertThat(actual.get(0).getStatus().getStatus()).isEqualTo("仮申込");
   }
 
   @Test
