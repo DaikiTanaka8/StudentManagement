@@ -26,7 +26,7 @@ public class StudentCourseAssembler {
     }
 
     for (StudentCourse studentCourse : studentCourseList){
-      studentCourse.setStatus(studentCourseStatusMap.get(studentCourse.getCourseId()));
+      studentCourse.setCourseStatus(studentCourseStatusMap.get(studentCourse.getCourseId()));
     }
 
     return studentCourseList;

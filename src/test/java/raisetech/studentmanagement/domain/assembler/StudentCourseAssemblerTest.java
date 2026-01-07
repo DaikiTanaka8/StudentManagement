@@ -1,7 +1,6 @@
 package raisetech.studentmanagement.domain.assembler;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,9 +44,9 @@ class StudentCourseAssemblerTest {
 
     List<StudentCourse> actual = sut.assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
 
-    assertThat(actual.get(0).getStatus().getStatus()).isEqualTo("仮申込");
-    assertThat(actual.get(1).getStatus().getStatus()).isEqualTo("本申込");
-    assertThat(actual.get(2).getStatus().getStatus()).isEqualTo("受講中");
+    assertThat(actual.get(0).getCourseStatus().getStatus()).isEqualTo("仮申込");
+    assertThat(actual.get(1).getCourseStatus().getStatus()).isEqualTo("本申込");
+    assertThat(actual.get(2).getCourseStatus().getStatus()).isEqualTo("受講中");
 
   }
 

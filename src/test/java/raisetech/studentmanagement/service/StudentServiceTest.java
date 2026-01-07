@@ -78,9 +78,9 @@ class StudentServiceTest {
 
     List<StudentCourse> actual = sut.studentCourseListWithStatus();
 
-    assertThat(actual.get(0).getStatus()).isNotNull();
-    assertThat(actual.get(0).getStatus().getCourseId()).isEqualTo("test-id-123");
-    assertThat(actual.get(0).getStatus().getStatus()).isEqualTo("仮申込");
+    assertThat(actual.get(0).getCourseStatus()).isNotNull();
+    assertThat(actual.get(0).getCourseStatus().getCourseId()).isEqualTo("test-id-123");
+    assertThat(actual.get(0).getCourseStatus().getStatus()).isEqualTo("仮申込");
   }
 
   //TODO: テスト通っていない。Spyを使うように進められたが、BeforeEachでRepositoryを毎回newしているのでうまくいかない。

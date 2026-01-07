@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.management.remote.SubjectDelegationPermission;
-import javax.security.auth.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,7 +58,7 @@ public class StudentService {
     }
 
     for (StudentCourse studentCourse : studentCourseList){
-      studentCourse.setStatus(studentCourseStatusMap.get(studentCourse.getCourseId()));
+      studentCourse.setCourseStatus(studentCourseStatusMap.get(studentCourse.getCourseId()));
     }
 
     return studentCourseList;
@@ -101,7 +99,7 @@ public class StudentService {
 
     for (StudentCourse studentCourse : studentCourseList){
       StudentCourseStatus status = repository.searchStudentCourseStatusById(studentCourse.getCourseId());
-      studentCourse.setStatus(status);
+      studentCourse.setCourseStatus(status);
     }
 
     return new StudentDetail(student, studentCourseList);
