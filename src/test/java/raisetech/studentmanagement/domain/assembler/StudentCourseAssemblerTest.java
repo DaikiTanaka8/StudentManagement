@@ -52,18 +52,26 @@ class StudentCourseAssemblerTest {
 
   @Test
   void ステータスが見つからない場合はnullが設定されること() {
-    // courseId="999" → statusList に存在しない
-    // → course.getStatus() == null
+    StudentCourse studentCourse1 = new StudentCourse();
+    studentCourse1.setCourseId("999");
+    StudentCourseStatus studentCourseStatus1 = new StudentCourseStatus();
+    studentCourseStatus1.setCourseId("1");
+    studentCourseStatus1.setStatus("仮申込");
+
+    List<StudentCourse> actual = sut.assembleCourseListWithStatus(List.of(studentCourse1),List.of(studentCourseStatus1));
+
+    assertThat(actual.get(0).getCourseStatus()).isNull();
+
   }
 
-  @Test
-  void 空のリストでも動作すること() {
-    // courseList=空, statusList=空
-    // → 空のリストが返る
-  }
-
-  @Test
-  void 複数のコースに同じステータスが紐づくこと() {
-    // 複数のcourseが同じcourseId（実際はありえないが念のため）
-  }
+//  @Test
+//  void 空のリストでも動作すること() {
+//    // courseList=空, statusList=空
+//    // → 空のリストが返る
+//  }
+//
+//  @Test
+//  void 複数のコースに同じステータスが紐づくこと() {
+//    // 複数のcourseが同じcourseId（実際はありえないが念のため）
+//  }
 }

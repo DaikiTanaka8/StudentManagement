@@ -148,15 +148,6 @@ public class StudentService {
     return studentDetail;
   }
 
-  @Transactional
-  public StudentCourseStatus registerStudentCourseStatus(StudentCourseStatus studentCourseStatus){
-    StudentCourseStatus studentCourseStatus = ;
-
-    repository.registerStudentCourseStatus(studentCourseStatus);
-
-
-  }
-
   /**
    * 受講生コース情報を登録する際の初期情報を設定する。
    * //MEMO: 勝手に作ったメソッドはprivateにしておく。使うメソッドのすぐ下に置いたり、一番下に置いたり、ケースバイケース。
