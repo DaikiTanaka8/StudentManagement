@@ -104,7 +104,6 @@ class StudentServiceTest {
 
   }
 
-
   @Test
   void 受講生詳細検索_リポジトリの呼び出しが適切に動作していること(){
     // 事前準備
