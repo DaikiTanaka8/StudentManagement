@@ -43,20 +43,20 @@ public class StudentService {
     return converter.convertStudentDetails(studentList, studentCourseList);
   }
 
-  /**
-   * コース申込状況の一覧検索です。
-   *
-   * @return コース申込状況一覧（全件）。
-   */
-  public List<StudentCourseStatus> searchStudentCourseStatusList(){
-    List<StudentCourseStatus> studentCourseStatusList = repository.searchStudentCourseStatus();
-    return studentCourseStatusList;
-  }
+//  /**
+//   * コース申込状況の一覧検索です。
+//   *
+//   * @return コース申込状況一覧（全件）。
+//   */
+//  public List<StudentCourseStatus> searchStudentCourseStatusList(){
+//    List<StudentCourseStatus> studentCourseStatusList = repository.searchStudentCourseStatus();
+//    return studentCourseStatusList;
+//  }
 
   /**
-   * 受講生コース情報（全件）とcourseIdをキーにした申込状況を結合します。
+   * コース申込状況を含む受講生コース情報の一覧検索です。
    *
-   * @return コース申込状況を含んだ受講生コースリスト。
+   * @return コース申込状況を含む受講生コース一覧（全件）。
    */
   public List<StudentCourse> studentCourseListWithStatus(){
     List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
@@ -66,9 +66,9 @@ public class StudentService {
   }
 
   /**
-   * 申込状況を含む受講生詳細の一覧検索です。 全件検索を行うので、条件指定は行いません。
+   * コース申込状況を含む受講生詳細の一覧検索です。 全件検索を行うので、条件指定は行いません。
    *
-   * @return 申込状況を含む受講生詳細一覧（全件）。全件検索した受講生詳細情報一覧
+   * @return コース申込状況を含む受講生詳細一覧（全件）。
    */
   public List<StudentDetail> searchStudentListWithStatus() {
     List<Student> studentList = repository.searchStudent();

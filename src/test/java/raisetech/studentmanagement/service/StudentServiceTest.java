@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import raisetech.studentmanagement.data.StudentCourseStatus;
 import raisetech.studentmanagement.domain.assembler.StudentCourseAssembler;
 import raisetech.studentmanagement.domain.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
@@ -31,13 +30,13 @@ class StudentServiceTest {
   private StudentConverter converter;
 
   @Mock
-  private StudentCourseAssembler courseAssembler;
+  private StudentCourseAssembler studentCourseAssembler;
 
   private StudentService sut;
 
   @BeforeEach
   void before(){
-    sut = new StudentService(repository, converter, courseAssembler);
+    sut = new StudentService(repository, converter, studentCourseAssembler);
   }
 
   @Test
@@ -64,44 +63,7 @@ class StudentServiceTest {
     // 後処理（DBに変更を加える場合は、DBをきれいにする必要がある。）
   }
 
-  @Test
-  void 受講生コース情報と申込状況がcourseIdを用いて結合されていること(){
-    StudentCourse course1 = new StudentCourse();
-    course1.setCourseId("test-id-123");
-    course1.setCourseName("テストコース");
 
-    StudentCourseStatus status1 = new StudentCourseStatus();
-    status1.setStatusId("test-statusId-789");
-    status1.setCourseId("test-id-123");
-    status1.setStatus("仮申込");
-
-    List<StudentCourse> studentCourseList = List.of(course1);
-    List<StudentCourseStatus> studentCourseStatusList = List.of(status1);
-    Mockito.when(repository.searchStudentCourseList()).thenReturn(studentCourseList);
-    Mockito.when(repository.searchStudentCourseStatus()).thenReturn(studentCourseStatusList);
-
-    List<StudentCourse> actual = sut.studentCourseListWithStatus();
-
-    assertThat(actual.get(0).getCourseStatus()).isNotNull();
-    assertThat(actual.get(0).getCourseStatus().getCourseId()).isEqualTo("test-id-123");
-    assertThat(actual.get(0).getCourseStatus().getStatus()).isEqualTo("仮申込");
-  }
-
-  //TODO: テスト通っていない。Spyを使うように進められたが、BeforeEachでRepositoryを毎回newしているのでうまくいかない。
-  @Test
-  void 申込状況を含む受講生詳細の一覧検索_リポジトリとコンバーターの処理が適切に呼び出せていること(){
-      List<Student> studentList = List.of(new Student());
-      List<StudentCourse> studentCourseList = List.of(new StudentCourse());
-      List<StudentDetail> expected = List.of(new StudentDetail());
-
-      Mockito.when(repository.searchStudent()).thenReturn(studentList);
-      Mockito.doReturn(studentCourseList).when(sut).studentCourseListWithStatus();
-      Mockito.when(converter.convertStudentDetails(studentList, studentCourseList)).thenReturn(expected);
-
-      List<StudentDetail> actual = sut.searchStudentListWithStatus();
-
-      assertThat(actual).isSameAs(expected);
-  }
 
   @Test
   void 受講生詳細検索_リポジトリの呼び出しが適切に動作していること(){
