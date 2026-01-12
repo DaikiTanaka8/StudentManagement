@@ -43,7 +43,7 @@ public interface StudentRepository {
    * コース情報に対するコース申込状況の全件検索を行います。
    * @return コース申込状況一覧（全件）。
    */
-  List<StudentCourseStatus> searchStudentCourseStatus();
+  List<StudentCourseStatus> searchStudentCourseStatusList();
 
   /**
    * 受講生コースIDに紐づくコース申込状況を検索します。

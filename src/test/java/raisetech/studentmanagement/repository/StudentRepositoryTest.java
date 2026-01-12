@@ -1,7 +1,6 @@
 package raisetech.studentmanagement.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -90,7 +89,7 @@ class StudentRepositoryTest {
 
   @Test
   void コース申込状況の全件検索が行えること(){
-    List<StudentCourseStatus> actual = sut.searchStudentCourseStatus();
+    List<StudentCourseStatus> actual = sut.searchStudentCourseStatusList();
     assertThat(actual.size()).isEqualTo(10);
   }
 
@@ -153,7 +152,7 @@ class StudentRepositoryTest {
 
     sut.registerStudentCourseStatus(studentCourseStatus);
 
-    List<StudentCourseStatus> actual = sut.searchStudentCourseStatus();
+    List<StudentCourseStatus> actual = sut.searchStudentCourseStatusList();
 
     // 登録後students_courses_statusの数が1つ増えている(10->11)ということを確認する。
     assertThat(actual.size()).isEqualTo(11);

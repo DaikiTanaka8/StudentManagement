@@ -60,7 +60,7 @@ public class StudentService {
    */
   public List<StudentCourse> studentCourseListWithStatus(){
     List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
-    List<StudentCourseStatus> studentCourseStatusList =repository.searchStudentCourseStatus();
+    List<StudentCourseStatus> studentCourseStatusList =repository.searchStudentCourseStatusList();
 
     return studentCourseAssembler.assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
   }

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import raisetech.studentmanagement.data.StudentCourseStatus;
 import raisetech.studentmanagement.domain.assembler.StudentCourseAssembler;
 import raisetech.studentmanagement.domain.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
@@ -63,7 +64,20 @@ class StudentServiceTest {
     // 後処理（DBに変更を加える場合は、DBをきれいにする必要がある。）
   }
 
+  @Test
+  void コース申込状況を含む受講生コース情報の一覧検索_リポジトリとアセンブラーの処理が適切に呼び出されていること(){
+    List<StudentCourse> studentCourseList = new ArrayList<>();
+    List<StudentCourseStatus> studentCourseStatusList = new ArrayList<>();
+    Mockito.when(repository.searchStudentCourseList()).thenReturn(studentCourseList);
+    Mockito.when(repository.searchStudentCourseStatusList()).thenReturn(studentCourseStatusList);
 
+    sut.studentCourseListWithStatus();
+
+    Mockito.verify(repository, times(1)).searchStudentCourseList();
+    Mockito.verify(repository, times(1)).searchStudentCourseStatusList();
+    Mockito.verify(studentCourseAssembler, times(1)).assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
+
+  }
 
   @Test
   void 受講生詳細検索_リポジトリの呼び出しが適切に動作していること(){
