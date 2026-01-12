@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.studentmanagement.data.StudentCourseStatus;
+import raisetech.studentmanagement.domain.assembler.StudentCourseAssembler;
 import raisetech.studentmanagement.domain.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
@@ -29,11 +30,14 @@ class StudentServiceTest {
   @Mock
   private StudentConverter converter;
 
+  @Mock
+  private StudentCourseAssembler courseAssembler;
+
   private StudentService sut;
 
   @BeforeEach
   void before(){
-    sut = new StudentService(repository, converter);
+    sut = new StudentService(repository, converter, courseAssembler);
   }
 
   @Test

@@ -1,14 +1,13 @@
 package raisetech.studentmanagement.service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.studentmanagement.data.StudentCourseStatus;
+import raisetech.studentmanagement.domain.assembler.StudentCourseAssembler;
 import raisetech.studentmanagement.domain.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
@@ -24,11 +23,13 @@ public class StudentService {
 
   private final StudentRepository repository;
   private final StudentConverter converter;
+  private final StudentCourseAssembler studentCourseAssembler;
 
   @Autowired
-  public StudentService(StudentRepository repository, StudentConverter converter) {
+  public StudentService(StudentRepository repository, StudentConverter converter, StudentCourseAssembler studentCourseAssembler) {
     this.repository = repository;
     this.converter = converter;
+    this.studentCourseAssembler = studentCourseAssembler;
   }
 
   /**
@@ -61,17 +62,7 @@ public class StudentService {
     List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
     List<StudentCourseStatus> studentCourseStatusList =repository.searchStudentCourseStatus();
 
-    Map<String, StudentCourseStatus> studentCourseStatusMap = new HashMap<>();
-
-    for(StudentCourseStatus studentCourseStatus : studentCourseStatusList){
-      studentCourseStatusMap.put(studentCourseStatus.getCourseId() , studentCourseStatus);
-    }
-
-    for (StudentCourse studentCourse : studentCourseList){
-      studentCourse.setCourseStatus(studentCourseStatusMap.get(studentCourse.getCourseId()));
-    }
-
-    return studentCourseList;
+    return studentCourseAssembler.assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
   }
 
   /**
