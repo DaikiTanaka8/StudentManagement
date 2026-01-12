@@ -67,41 +67,46 @@ class StudentServiceTest {
 
   @Test
   void コース申込状況を含む受講生コース情報の一覧検索_リポジトリとアセンブラーの処理が適切に呼び出されていること(){
+    // 事前準備
     List<StudentCourse> studentCourseList = new ArrayList<>();
     List<StudentCourseStatus> studentCourseStatusList = new ArrayList<>();
     Mockito.when(repository.searchStudentCourseList()).thenReturn(studentCourseList);
     Mockito.when(repository.searchStudentCourseStatusList()).thenReturn(studentCourseStatusList);
 
+    // 実行
     sut.studentCourseListWithStatus();
 
+    // 検証
     Mockito.verify(repository, times(1)).searchStudentCourseList();
     Mockito.verify(repository, times(1)).searchStudentCourseStatusList();
     Mockito.verify(studentCourseAssembler, times(1)).assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
-
   }
 
   @Test
   void コース申込状況を含む受講生詳細の一覧検索_リポジトリとアセンブラーとコンバーターらの依存コンポーネントが正しく呼び出せていること(){
+    // 事前準備
     List<Student> studentList = new ArrayList<>();
     List<StudentCourse> studentCourseList = new ArrayList<>();
     List<StudentCourseStatus> studentCourseStatusList = new ArrayList<>();
     List<StudentCourse> assembledList = new ArrayList<>();
     List<StudentDetail> expected = new ArrayList<>();
+
     Mockito.when(repository.searchStudent()).thenReturn(studentList);
     Mockito.when(repository.searchStudentCourseList()).thenReturn(studentCourseList);
     Mockito.when(repository.searchStudentCourseStatusList()).thenReturn(studentCourseStatusList);
     Mockito.when(studentCourseAssembler.assembleCourseListWithStatus(studentCourseList, studentCourseStatusList)).thenReturn(assembledList);
     Mockito.when(converter.convertStudentDetails(studentList, assembledList)).thenReturn(expected);
 
+    // 実行
     List<StudentDetail> actual = sut.searchStudentListWithStatus();
 
+    // 検証
     Mockito.verify(repository, times(1)).searchStudent();
     Mockito.verify(repository, times(1)).searchStudentCourseList();
     Mockito.verify(repository, times(1)).searchStudentCourseStatusList();
     Mockito.verify(studentCourseAssembler, times(1)).assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
     Mockito.verify(converter, times(1)).convertStudentDetails(studentList, assembledList);
     assertThat(actual).isSameAs(expected);
-
   }
 
   @Test
@@ -120,7 +125,6 @@ class StudentServiceTest {
     // 検証
     Mockito.verify(repository, times(1)).searchStudentById(studentId);
     Mockito.verify(repository, times(1)).searchStudentCourseListById(student.getStudentId());
-
   }
 
   @Test
@@ -144,7 +148,6 @@ class StudentServiceTest {
     assertEquals(expectedStudent.getStudentId(), actual.getStudent().getStudentId());
     assertEquals(expectedStudent.getName(), actual.getStudent().getName());
     assertEquals(expectedStudentCourseList, actual.getStudentCourseList());
-
   }
 
   @Test
@@ -158,12 +161,15 @@ class StudentServiceTest {
       sut.searchStudentById(studentId);
     });
     // MEMO: 「assertThrows(例外クラス, () -> { 実行するコード })」は、「この処理を実行したら、この例外が発生するはず」という検証。
+  }
+
+  @Test
+  void コース申込状況を含む受講生詳細検索_リポジトリの呼び出しが適切に呼び出されていること(){
 
   }
 
   @Test
   void 受講生詳細登録_リポジトリが適切に呼び出されていること(){
-
     // 事前準備
     Student student = new Student(); //MEMO: ②"StudentDetail"に含まれる"Student"を用意。
     StudentCourse course1 =new StudentCourse();
@@ -184,7 +190,6 @@ class StudentServiceTest {
 
   @Test
   void 受講生詳細登録_登録情報が適切に付与されて返されること(){
-
     // 事前準備
     Student student = new Student();
     student.setName("テスト太郎");
@@ -218,7 +223,6 @@ class StudentServiceTest {
 
   @Test
   void 受講生詳細更新_リポジトリが適切に呼び出されていること(){
-
     // 事前準備
     Student student = new Student(); //MEMO: ②"StudentDetail"に含まれる"Student"を用意。
     StudentCourse course1 =new StudentCourse();
@@ -239,7 +243,6 @@ class StudentServiceTest {
 
   @Test
   void 受講生詳細の論理削除_リポジトリが適切に呼び出されていること(){
-
     // 事前準備
     String studentId = "test-id-123";
 
@@ -248,7 +251,6 @@ class StudentServiceTest {
 
     // 検証
     Mockito.verify(repository, times(1)).localDeleteStudent(studentId);
-
   }
 
 }
