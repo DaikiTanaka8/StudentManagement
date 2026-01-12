@@ -188,7 +188,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void コース申込状況を含む受講生詳細検索_正しくコース申込状況を含む受講生詳細が返されること(){
+  void コース申込状況を含む受講生詳細検索_コース申込状況を含む受講生詳細が正しく返されること(){
     // 事前準備
     Student student = new Student();
     student.setStudentId("test-id-123");
