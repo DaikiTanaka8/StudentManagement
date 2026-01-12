@@ -100,7 +100,7 @@ public class StudentService {
   }
 
   /**
-   * 受講生詳細検索です。コース申込状況が一緒になった受講生コース情報が取得されます。
+   * コース申込状況を含む受講生詳細検索です。
    *
    * @param studentId 受講生ID
    * @return IDで検索した受講生詳細情報（単一の受講生情報+受講生コース情報+コース申込状況）。
@@ -108,13 +108,10 @@ public class StudentService {
   public StudentDetail searchStudentByIdWithStatus(String studentId) {
     Student student = repository.searchStudentById(studentId);
     List<StudentCourse> studentCourseList = repository.searchStudentCourseListById(student.getStudentId());
+    List<StudentCourseStatus> studentCourseStatusList = repository.searchStudentCourseStatusList();
+    List<StudentCourse> assembledList = studentCourseAssembler.assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
 
-    for (StudentCourse studentCourse : studentCourseList){
-      StudentCourseStatus status = repository.searchStudentCourseStatusById(studentCourse.getCourseId());
-      studentCourse.setCourseStatus(status);
-    }
-
-    return new StudentDetail(student, studentCourseList);
+    return new StudentDetail(student, assembledList);
   }
 
   /**
