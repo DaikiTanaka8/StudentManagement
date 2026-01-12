@@ -165,7 +165,27 @@ class StudentServiceTest {
 
   @Test
   void コース申込状況を含む受講生詳細検索_リポジトリの呼び出しが適切に呼び出されていること(){
+    // 事前準備
+    Student student = new Student();
+    String studentId = "test-id-123";
+    student.setStudentId(studentId);
+    List<StudentCourse> studentCourseList = new ArrayList<>();
+    List<StudentCourseStatus> studentCourseStatusList = new ArrayList<>();
+    List<StudentCourse> assembledList = new ArrayList<>();
 
+    Mockito.when(repository.searchStudentById(studentId)).thenReturn(student);
+    Mockito.when(repository.searchStudentCourseListById(student.getStudentId())).thenReturn(studentCourseList);
+    Mockito.when(repository.searchStudentCourseStatusList()).thenReturn(studentCourseStatusList);
+    Mockito.when(studentCourseAssembler.assembleCourseListWithStatus(studentCourseList, studentCourseStatusList)).thenReturn(assembledList);
+
+    // 実行
+    sut.searchStudentByIdWithStatus(studentId);
+
+    // 検証
+    Mockito.verify(repository, times(1)).searchStudentById(studentId);
+    Mockito.verify(repository, times(1)).searchStudentCourseListById(student.getStudentId());
+    Mockito.verify(repository, times(1)).searchStudentCourseStatusList();
+    Mockito.verify(studentCourseAssembler, times(1)).assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
   }
 
   @Test
