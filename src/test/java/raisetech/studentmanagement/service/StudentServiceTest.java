@@ -188,6 +188,45 @@ class StudentServiceTest {
   }
 
   @Test
+  void コース申込状況を含む受講生詳細検索_正しくコース申込状況を含む受講生詳細が返されること(){
+    // 事前準備
+    Student student = new Student();
+    student.setStudentId("test-id-123");
+    student.setName("テスト太郎");
+
+    StudentCourse studentCourse = new StudentCourse();
+    studentCourse.setCourseId("test-courseId-456");
+    studentCourse.setCourseName("テストコース");
+    List<StudentCourse> studentCourseList = List.of(studentCourse);
+
+    StudentCourse assembledCourse = new StudentCourse();
+    assembledCourse.setCourseId("test-courseId-456");
+    assembledCourse.setCourseName("テストコース");
+
+    StudentCourseStatus studentCourseStatus = new StudentCourseStatus();
+    studentCourseStatus.setStatusId("test-statusId-789");
+    studentCourseStatus.setCourseId("test-courseId-456");
+    studentCourseStatus.setStatus("仮申込");
+
+    assembledCourse.setCourseStatus(studentCourseStatus);
+
+    List<StudentCourseStatus> studentCourseStatusList = List.of(studentCourseStatus);
+    List<StudentCourse> assembledList = List.of(assembledCourse);
+
+    Mockito.when(repository.searchStudentById("test-id-123")).thenReturn(student);
+    Mockito.when(repository.searchStudentCourseListById(student.getStudentId())).thenReturn(studentCourseList);
+    Mockito.when(repository.searchStudentCourseStatusList()).thenReturn(studentCourseStatusList);
+    Mockito.when(studentCourseAssembler.assembleCourseListWithStatus(studentCourseList, studentCourseStatusList)).thenReturn(assembledList);
+
+    // 実行
+    StudentDetail actual= sut.searchStudentByIdWithStatus("test-id-123");
+
+    // 検証
+    assertThat(actual.getStudentCourseList().get(0).getCourseId()).isEqualTo("test-courseId-456");
+    assertThat(actual.getStudentCourseList().get(0).getCourseStatus().getStatus()).isEqualTo("仮申込");
+  }
+
+  @Test
   void 受講生詳細登録_リポジトリが適切に呼び出されていること(){
     // 事前準備
     Student student = new Student(); //MEMO: ②"StudentDetail"に含まれる"Student"を用意。
