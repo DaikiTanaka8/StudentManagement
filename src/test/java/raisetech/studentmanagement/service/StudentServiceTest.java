@@ -1,6 +1,7 @@
 package raisetech.studentmanagement.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -78,6 +79,31 @@ class StudentServiceTest {
     Mockito.verify(studentCourseAssembler, times(1)).assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
 
   }
+
+  @Test
+  void コース申込状況を含む受講生詳細の一覧検索_リポジトリとアセンブラーとコンバーターらの依存コンポーネントが正しく呼び出せていること(){
+    List<Student> studentList = new ArrayList<>();
+    List<StudentCourse> studentCourseList = new ArrayList<>();
+    List<StudentCourseStatus> studentCourseStatusList = new ArrayList<>();
+    List<StudentCourse> assembledList = new ArrayList<>();
+    List<StudentDetail> expected = new ArrayList<>();
+    Mockito.when(repository.searchStudent()).thenReturn(studentList);
+    Mockito.when(repository.searchStudentCourseList()).thenReturn(studentCourseList);
+    Mockito.when(repository.searchStudentCourseStatusList()).thenReturn(studentCourseStatusList);
+    Mockito.when(studentCourseAssembler.assembleCourseListWithStatus(studentCourseList, studentCourseStatusList)).thenReturn(assembledList);
+    Mockito.when(converter.convertStudentDetails(studentList, assembledList)).thenReturn(expected);
+
+    List<StudentDetail> actual = sut.searchStudentListWithStatus();
+
+    Mockito.verify(repository, times(1)).searchStudent();
+    Mockito.verify(repository, times(1)).searchStudentCourseList();
+    Mockito.verify(repository, times(1)).searchStudentCourseStatusList();
+    Mockito.verify(studentCourseAssembler, times(1)).assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
+    Mockito.verify(converter, times(1)).convertStudentDetails(studentList, assembledList);
+    assertThat(actual).isSameAs(expected);
+
+  }
+
 
   @Test
   void 受講生詳細検索_リポジトリの呼び出しが適切に動作していること(){
