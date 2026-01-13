@@ -229,13 +229,12 @@ class StudentServiceTest {
   @Test
   void 受講生詳細登録_リポジトリが適切に呼び出されていること(){
     // 事前準備
-    Student student = new Student(); //MEMO: ②"StudentDetail"に含まれる"Student"を用意。
+    Student student = new Student();
     StudentCourse course1 =new StudentCourse();
     StudentCourse course2 =new StudentCourse();
     StudentCourse course3 =new StudentCourse();
-    List<StudentCourse> studentCourseList = List.of(course1, course2, course3); //MEMO: ②"StudentDetail"に含まれる"StudentCourseList"を用意。
-    StudentDetail studentDetail = new StudentDetail(student, studentCourseList); //MEMO: ①メソッドの引数は"StudentDetail"。
-    //MEMO: ちなみに、foreachやinitStudentCourseではrepositoryは呼び出されていない。なのでWhen-Thenは使わない。
+    List<StudentCourse> studentCourseList = List.of(course1, course2, course3);
+    StudentDetail studentDetail = new StudentDetail(student, studentCourseList);
 
     // 実行
     sut.registerStudent(studentDetail);
@@ -243,7 +242,7 @@ class StudentServiceTest {
     // 検証
     Mockito.verify(repository, times(1)).registerStudent(student);
     Mockito.verify(repository, times(3)).registerStudentCourse(any(StudentCourse.class));
-    //MEMO: any()は「「どんなStudentCourseでもいいから、3回呼ばれたことを確認」という意味。
+    Mockito.verify(repository, times(3)).registerStudentCourseStatus(any(StudentCourseStatus.class));
   }
 
   @Test
