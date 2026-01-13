@@ -121,17 +121,14 @@ public class StudentService {
    * @param studentDetail 受講生詳細
    * @return 登録情報を付与した受講生詳細
    */
-  @Transactional //MEMO: サービスで登録したり更新をしたり削除したりする時に必ずつける！
-  //MEMO: トランザクション管理、途中でエラーになったら登録内容を戻す。サービスに入れる。（片方登録されてもう片方は登録されない、というのを防ぐ。）
-  // registerStudentをStudentDetailで返して、StudentIdを取れるようにする。
+  @Transactional
   public StudentDetail registerStudent(StudentDetail studentDetail) {
-    Student student = studentDetail.getStudent(); //MEMO: 「studentDetail.getStudent()」という記述が何箇所かあったので、変数の導入でスッキリさせる。
-    student.setStudentId(UUID.randomUUID().toString()); //MEMO: ここでIDを設定。UUIDを自動採番。
+    Student student = studentDetail.getStudent();
+    student.setStudentId(UUID.randomUUID().toString());
+    repository.registerStudent(student);
 
-    repository.registerStudent(student); //MEMO: ここで実際の登録処理。repositoryを呼び分ける。
-
-    studentDetail.getStudentCourseList().forEach(studentCourse -> { //MEMO: 今回はListで渡さないから、ループさせないといけない。
-      initStudentCourse(studentCourse, student); //MEMO: ごちゃっとした処理はメソッドの抽出でまとめてスッキリさせる。
+    studentDetail.getStudentCourseList().forEach(studentCourse -> {
+      initStudentCourse(studentCourse, student);
       repository.registerStudentCourse(studentCourse);
 
       StudentCourseStatus studentCourseStatus = initStudentCourseStatus(studentCourse);
@@ -143,16 +140,15 @@ public class StudentService {
 
   /**
    * 受講生コース情報を登録する際の初期情報を設定する。
-   * //MEMO: 勝手に作ったメソッドはprivateにしておく。使うメソッドのすぐ下に置いたり、一番下に置いたり、ケースバイケース。
    *
    * @param studentCourse 受講生コース情報
    * @param student 受講生
    */
   private void initStudentCourse(StudentCourse studentCourse, Student student) {
-    LocalDate now = LocalDate.now(); //MEMO: これも２箇所あったから変数の導入を行う。
+    LocalDate now = LocalDate.now();
 
-    studentCourse.setCourseId(UUID.randomUUID().toString()); //MEMO: コースIDもUUIDで自動で設定するようにした。
-    studentCourse.setStudentId(student.getStudentId()); //MEMO: ここでさっき設定された受講生のIDを取ってくる。
+    studentCourse.setCourseId(UUID.randomUUID().toString());
+    studentCourse.setStudentId(student.getStudentId());
     studentCourse.setStartDate(now);
     studentCourse.setEndDate(now.plusYears(1));
   }
@@ -163,7 +159,7 @@ public class StudentService {
    * @param studentCourse 受講セーコース情報
    * @return コース申込状況
    */
-  private static StudentCourseStatus initStudentCourseStatus(StudentCourse studentCourse) {
+  private StudentCourseStatus initStudentCourseStatus(StudentCourse studentCourse) {
     StudentCourseStatus studentCourseStatus = new StudentCourseStatus();
     studentCourseStatus.setStatusId(UUID.randomUUID().toString());
     studentCourseStatus.setCourseId(studentCourse.getCourseId());
