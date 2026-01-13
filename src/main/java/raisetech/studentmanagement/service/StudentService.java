@@ -182,6 +182,19 @@ public class StudentService {
   }
 
   /**
+   * コース申込状況の更新を行います。
+   *
+   * @param courseId 受講生コース情報のコースID
+   * @param newStatus 更新するコース申込状況
+   */
+  @Transactional
+  public void updateStudentCourseStatus(String courseId, String newStatus){
+    StudentCourseStatus status = repository.searchStudentCourseStatusById(courseId);
+    status.setStatus(newStatus);
+    repository.updateStudentCourseStatus(status);
+  }
+
+  /**
    * 受講生詳細の削除（論理削除）を行います。
    *
    * @param studentId 受講生ID
