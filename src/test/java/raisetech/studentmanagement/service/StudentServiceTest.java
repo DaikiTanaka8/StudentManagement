@@ -260,22 +260,17 @@ class StudentServiceTest {
     StudentDetail actual= sut.registerStudent(studentDetail);
 
     // 検証
-    //MEMO: 入力した値が保持されているか。
     assertThat(actual.getStudent().getName()).isEqualTo("テスト太郎");
     assertThat(actual.getStudentCourseList().get(0).getCourseName()).isEqualTo("テストコース");
 
-    //MEMO: studentIdが自動生成されているか。
     assertThat(actual.getStudent().getStudentId()).isNotNull();
 
-    //MEMO: コースの初期値が設定されているか。
     StudentCourse actualStudentCourseList = actual.getStudentCourseList().get(0);
     assertThat(actualStudentCourseList.getCourseId()).isNotNull();
     assertThat(actualStudentCourseList.getStartDate()).isNotNull();
     assertThat(actualStudentCourseList.getEndDate()).isNotNull();
 
-    //MEMO: 登録したStudentのstudentIdとコース情報のstudentIdが一致しているかどうか。
     assertThat(actualStudentCourseList.getStudentId()).isEqualTo(actual.getStudent().getStudentId());
-
     assertThat(actualStudentCourseList.getCourseStatus().getStatus()).isEqualTo("仮申込");
   }
 
