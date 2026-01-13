@@ -129,10 +129,15 @@ public class StudentService {
     student.setStudentId(UUID.randomUUID().toString()); //MEMO: ここでIDを設定。UUIDを自動採番。
 
     repository.registerStudent(student); //MEMO: ここで実際の登録処理。repositoryを呼び分ける。
+
     studentDetail.getStudentCourseList().forEach(studentCourse -> { //MEMO: 今回はListで渡さないから、ループさせないといけない。
       initStudentCourse(studentCourse, student); //MEMO: ごちゃっとした処理はメソッドの抽出でまとめてスッキリさせる。
       repository.registerStudentCourse(studentCourse);
+
+      StudentCourseStatus studentCourseStatus = initStudentCourseStatus(studentCourse);
+      repository.registerStudentCourseStatus(studentCourseStatus);
     });
+
     return studentDetail;
   }
 
@@ -150,6 +155,20 @@ public class StudentService {
     studentCourse.setStudentId(student.getStudentId()); //MEMO: ここでさっき設定された受講生のIDを取ってくる。
     studentCourse.setStartDate(now);
     studentCourse.setEndDate(now.plusYears(1));
+  }
+
+  /**
+   * コース申込状況を登録する際の初期情報を設定する。（初期値：仮申込）
+   *
+   * @param studentCourse 受講セーコース情報
+   * @return コース申込状況
+   */
+  private static StudentCourseStatus initStudentCourseStatus(StudentCourse studentCourse) {
+    StudentCourseStatus studentCourseStatus = new StudentCourseStatus();
+    studentCourseStatus.setStatusId(UUID.randomUUID().toString());
+    studentCourseStatus.setCourseId(studentCourse.getCourseId());
+    studentCourseStatus.setStatus("仮申込");
+    return studentCourseStatus;
   }
 
   /**
