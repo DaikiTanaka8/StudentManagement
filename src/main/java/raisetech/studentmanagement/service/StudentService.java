@@ -132,6 +132,7 @@ public class StudentService {
       repository.registerStudentCourse(studentCourse);
 
       StudentCourseStatus studentCourseStatus = initStudentCourseStatus(studentCourse);
+      studentCourse.setCourseStatus(studentCourseStatus);
       repository.registerStudentCourseStatus(studentCourseStatus);
     });
 

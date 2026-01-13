@@ -255,7 +255,6 @@ class StudentServiceTest {
     course1.setCourseName("テストコース");
     List<StudentCourse> studentCourseList = List.of(course1);
     StudentDetail studentDetail = new StudentDetail(student, studentCourseList);
-    //MEMO: studentIdやcourseId,startDate,endDateは自動生成されるから設定しない。
 
     // 実行
     StudentDetail actual= sut.registerStudent(studentDetail);
@@ -276,6 +275,8 @@ class StudentServiceTest {
 
     //MEMO: 登録したStudentのstudentIdとコース情報のstudentIdが一致しているかどうか。
     assertThat(actualStudentCourseList.getStudentId()).isEqualTo(actual.getStudent().getStudentId());
+
+    assertThat(actualStudentCourseList.getCourseStatus().getStatus()).isEqualTo("仮申込");
   }
 
   @Test
