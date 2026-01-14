@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.within;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -277,13 +279,12 @@ class StudentServiceTest {
   @Test
   void 受講生詳細更新_リポジトリが適切に呼び出されていること(){
     // 事前準備
-    Student student = new Student(); //MEMO: ②"StudentDetail"に含まれる"Student"を用意。
+    Student student = new Student();
     StudentCourse course1 =new StudentCourse();
     StudentCourse course2 =new StudentCourse();
     StudentCourse course3 =new StudentCourse();
-    List<StudentCourse> studentCourseList = List.of(course1, course2, course3); //MEMO: ②"StudentDetail"に含まれる"StudentCourseList"を用意。
-    StudentDetail studentDetail = new StudentDetail(student, studentCourseList); //MEMO: ①メソッドの引数は"StudentDetail"。
-    //MEMO: ちなみに、foreachやinitStudentCourseではrepositoryは呼び出されていない。なのでWhen-Thenは使わない。
+    List<StudentCourse> studentCourseList = List.of(course1, course2, course3);
+    StudentDetail studentDetail = new StudentDetail(student, studentCourseList);
 
     // 実行
     sut.updateStudent(studentDetail);
@@ -291,7 +292,21 @@ class StudentServiceTest {
     // 検証
     Mockito.verify(repository, times(1)).updateStudent(student);
     Mockito.verify(repository, times(3)).updateStudentCourse(any(StudentCourse.class));
-    //MEMO: any()は「「どんなStudentCourseでもいいから、3回呼ばれたことを確認」という意味。
+  }
+
+  @Test
+  void コース申込状況の更新_リポジトリが適切に呼び出されていること(){
+    // 事前準備
+    StudentCourseStatus studentCourseStatus = new StudentCourseStatus();
+    studentCourseStatus.setStatusId("test-id-123");
+    studentCourseStatus.setCourseId("test-id-789");
+    studentCourseStatus.setStatus("受講中");
+
+    // 実行
+    sut.updateStudentCourseStatus(studentCourseStatus);
+
+    // 検証
+    Mockito.verify(repository, times(1)).updateStudentCourseStatus(studentCourseStatus);
   }
 
   @Test
