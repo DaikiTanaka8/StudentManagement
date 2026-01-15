@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import raisetech.studentmanagement.data.StudentCourseStatus;
 import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.service.StudentService;
 
@@ -70,17 +71,17 @@ public class StudentController {
       operationId = "searchStudentListWithStatus"
   )
   @GetMapping("/studentListWithStatus")
-  public List<StudentDetail> getStudentListWithStatus() { return service.searchStudentListWithStatus();}
+  public List<StudentDetail> getStudentListWithStatus() { return service.searchStudentListWithStatus(); }
 
   /**
-   * 受講生検索です。 IDに紐づく任意の受講生情報を取得します。
+   * 受講生詳細検索です。 IDに紐づく任意の受講生情報を取得します。
    *
    * @param studentId 受講生ID
-   * @return 受講生
+   * @return 受講生詳細
    */
   @Operation(
-      summary = "単一の受講生の検索", //MEMO: 一言で説明。
-      description = "指定したIDの受講生情報を取得します。", //MEMO: 詳しい説明。
+      summary = "単一の受講生詳細の検索", //MEMO: 一言で説明。
+      description = "指定したIDの受講生詳細情報を取得します。", //MEMO: 詳しい説明。
       tags = {"student-controller" }, //MEMO: カテゴリ分け。
       operationId = "searchStudentById", //MEMO: APIの識別子（自動生成コード用）。
       parameters = { //MEMO: クエリ/パスのパラメータ説明。
@@ -96,6 +97,32 @@ public class StudentController {
   public StudentDetail getStudent(
       @PathVariable @Size(min = 1, max = 36) String studentId) { //MEMO: ID情報を持ってないといけない→「@PathVariable」：URLの一部から受け取るときに使う。今回は{student_id}だね。
     return service.searchStudentById(studentId);
+  }
+
+  /**
+   * コース申込状況を含む受講生詳細検索です。 IDに紐づく任意の受講生詳細情報を取得します。
+   *
+   * @param studentId 受講生ID
+   * @return 受講生詳細
+   */
+  @Operation(
+      summary = "コース申込状況を含む単一の受講生詳細の検索",
+      description = "指定したIDのコース申込状況を含む受講生詳細情報を取得します。",
+      tags = {"student-controller" },
+      operationId = "searchStudentById",
+      parameters = {
+          @Parameter(
+              name = "studentId",
+              description = "取得したい受講生のID",
+              required = true,
+              in = ParameterIn.PATH
+          )
+      }
+  )
+  @GetMapping("/studentWithCourseStatus/{studentId}") //MEMO: 単一の受講生の情報。「/student/1」みたいな表示になる。
+  public StudentDetail getStudentWithCourseStatus(
+      @PathVariable @Size(min = 1, max = 36) String studentId) { //MEMO: ID情報を持ってないといけない→「@PathVariable」：URLの一部から受け取るときに使う。今回は{student_id}だね。
+    return service.searchStudentByIdWithStatus(studentId);
   }
 
   /**
@@ -156,6 +183,34 @@ public class StudentController {
         "更新処理が成功しました。"); //MEMO: うまくいったらOKを返す。OKの中にBodyに何を入れますか？ということ。今回メッセージなので、Stringにしている。
   }
 
+  /**
+   * コース申込状況の更新を行います。
+   *
+   * @param studentCourseStatus コース申込状況
+   * @return 実行結果
+   */
+  //MEMO: 講義30で作った受講生更新メソッド。 登録処理。新規受講生情報を登録する。 「@RequestBody」でStudentDetailが飛んできますよ。というのは変わらない。
+  // 画面を返すわけではないので、何も返さない。→ResponseEntityを返す。POSTなので結果がない、ただ何も返さないと困るので、更新を成功したのか失敗したのかを返す。
+  @Operation(
+      summary = "コース申込状況の更新",
+      description = "コース申込状況の更新を行います。",
+      tags = {"student-controller" },
+      operationId = "updateStudentCourseStatus",
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody( //MEMO: 「@RequestBody」とだけ書くとSpringのリクエストボディが選ばれてしまうからフルパスで記述。
+          description = "更新したいコース申込状況",
+          required = true,
+          content = @Content( //MEMO: レスポンス（またはリクエスト）のContent-Typeとデータ構造（スキーマ）の説明。
+              mediaType = "application/json", //MEMO: APIレスポンス形式がJSONですよ。
+              schema = @Schema(implementation = StudentCourseStatus.class) //MEMO: 「このAPIのレスポンスはStudentDetailクラスの形のJSONです」ってこと。
+          )
+      )
+  )
+  @PutMapping("/updateStudentCourseStatus")
+  public ResponseEntity<String> updateStudentCourseStatus(@Valid @RequestBody StudentCourseStatus studentCourseStatus) {
+    service.updateStudentCourseStatus(studentCourseStatus);
+    return ResponseEntity.ok(
+        "更新処理が成功しました。"); //MEMO: うまくいったらOKを返す。OKの中にBodyに何を入れますか？ということ。今回メッセージなので、Stringにしている。
+  }
 
   /**
    * 受講生詳細の削除（論理削除）を行います。 //MEMO: 課題30で作った受講生削除メソッド（自作）。studentDetail→studentIdに変更。
