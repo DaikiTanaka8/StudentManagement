@@ -157,7 +157,7 @@ public class StudentService {
   /**
    * コース申込状況を登録する際の初期情報を設定する。（初期値：仮申込）
    *
-   * @param studentCourse 受講セーコース情報
+   * @param studentCourse 受講生コース情報
    * @return コース申込状況
    */
   private StudentCourseStatus initStudentCourseStatus(StudentCourse studentCourse) {
@@ -196,7 +196,7 @@ public class StudentService {
    *
    * @param studentId 受講生ID
    */
-  @Transactional //MEMO: サービスで登録したり更新をしたり削除したりする時に必ずつける！！
+  @Transactional
   public void localDeleteStudent(String studentId) {
     repository.localDeleteStudent(studentId);
   }
