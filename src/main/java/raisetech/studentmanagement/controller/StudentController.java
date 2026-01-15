@@ -25,11 +25,11 @@ import raisetech.studentmanagement.service.StudentService;
 /**
  * 受講生の検索や登録、更新などを行うREST APIとして受け付けるControllerです。
  */
-@Validated //MEMO: これを書くことでControllerクラスで入力チェックをかけますよ、と言っている。
-@RestController //MEMO: @RestController(JSONで返していた)→@Controllerに変える(HTML使用時）→再度RestControllerに変える
+@Validated
+@RestController
 public class StudentController {
 
-  private StudentService service; //MEMO: 受講生サービス。まずはサービスを持つ必要があるので、ここで記述。
+  private final StudentService service;
   private Logger logger;
 
   /**
@@ -39,13 +39,13 @@ public class StudentController {
    */
   @Autowired //MEMO: オートワイヤードで自動で管理。コンストラクタインジェクション。
   public StudentController(StudentService service) {
-    this.service = service; //MEMO: コンストラクターを生成。フィールドを持ったやつを作る。
+    this.service = service;
   }
 
   /**
-   * 受講生詳細の一覧検索です。 //MEMO: 受講生情報一覧。ユーザーからすると「ほしい」だからgetにしている。
+   * 受講生詳細の一覧検索です。
    *
-   * @return 受講生詳細一覧（全件）。 //MEMO: コンバートした受講生情報→受講生とその受講生が受講している受講生コース情報の一覧
+   * @return 受講生詳細一覧（全件）。
    */
   @Operation(
       summary = "受講生の一覧検索", //MEMO: 一言で説明。
@@ -57,6 +57,20 @@ public class StudentController {
   public List<StudentDetail> getStudentList() {
     return service.searchStudentList();
   }
+
+  /**
+   * コース申込状況を含む受講生詳細の一覧検索です。
+   *
+   * @return コース申込状況を含む受講生詳細一覧（全件）。
+   */
+  @Operation(
+      summary = "コース申込状況を含む受講生の一覧検索",
+      description = "コース申込状況を含む受講生の一覧を検索します。",
+      tags = {"student-controller" },
+      operationId = "searchStudentListWithStatus"
+  )
+  @GetMapping("/studentListWithStatus")
+  public List<StudentDetail> getStudentListWithStatus() { return service.searchStudentListWithStatus();}
 
   /**
    * 受講生検索です。 IDに紐づく任意の受講生情報を取得します。
