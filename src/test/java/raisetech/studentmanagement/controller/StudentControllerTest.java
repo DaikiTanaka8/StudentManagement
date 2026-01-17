@@ -24,25 +24,27 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
+import raisetech.studentmanagement.data.StudentCourseStatus;
 import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.domain.assembler.StudentCourseAssembler;
 import raisetech.studentmanagement.repository.StudentRepository;
 import raisetech.studentmanagement.service.StudentService;
 
 
-@WebMvcTest(StudentController.class) //MEMO: 「StudentControllerだけ起動するWeb層のテストですよ」という宣言。テスト用のSpringBootが立ち上がる。
+@WebMvcTest(StudentController.class)
 class StudentControllerTest {
 
   @Autowired
-  private MockMvc mockMvc; //MEMO: SpringBootが用意しているMockの仕組み。HTTPリクエストを擬似的に投げるための仕組み。
+  private MockMvc mockMvc;
 
   @Autowired
   private ObjectMapper objectMapper; //MEMO: JSONの文字列で変換する(自分で追加)
 
   @MockBean
-  private StudentService service; //MEMO: Mock化したサービスを用意しておく。コントローラーはMockBean。
+  private StudentService service;
 
   @MockBean
-  private StudentRepository repository; //MEMO: これがないとMyBatisのリポジトリを呼び出してしまう。だから、リポジトリもMock化してしまった。
+  private StudentRepository repository;
 
   private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
   //MEMO: Bean Validation（Jakarta Validation / Hibernate Validator）を使うための“バリデータ本体”を生成するコード。
@@ -50,7 +52,7 @@ class StudentControllerTest {
 
 
   @Test
-  void 受講生詳細の一覧検索が実行できてからのリストが返ってくること() throws Exception {
+  void 受講生詳細の一覧検索が実行できて空のリストが返ってくること() throws Exception {
     Student student = new Student();
     student.setStudentId("test-id-123");
     student.setName("テスト太郎");
@@ -72,6 +74,15 @@ class StudentControllerTest {
             """));
 
     verify(service, times(1)).searchStudentList();
+  }
+
+  @Test
+  void コース申込状況を含む受講生詳細の一覧検索が実行できてからのリストが返ってくること() throws Exception {
+    mockMvc.perform(get("/studentListWithStatus"))
+        .andExpect(status().isOk())
+        .andExpect(content().json("[]"));
+
+    verify(service, times(1)).searchStudentListWithStatus();
   }
 
   @Test
@@ -159,6 +170,47 @@ class StudentControllerTest {
         .andExpect(status().isInternalServerError()); //MEMO: URLが36文字以上だから、500エラーが返ってくる。
 
     verify(service, times(0)).searchStudentById(studentId); //MEMO: エラーだからリポジトリは呼び出されない。
+
+  }
+
+  @Test
+  void コース申込状況を含む受講生検索のID検索が実行したら受講生詳細が返ってくること() throws Exception {
+    Student student = new Student();
+    student.setStudentId("test-id-123");
+    student.setName("テスト太郎");
+    student.setFurigana("てすとたろう");
+    student.setNickname("テストさん");
+    student.setEmail("test@example.com");
+    student.setCity("東京");
+    student.setAge(100);
+    student.setGender("その他");
+    student.setRemark("");
+
+    StudentDetail studentDetail = new StudentDetail(student,List.of());
+
+    when(service.searchStudentByIdWithStatus("test-id-123")).thenReturn(studentDetail);
+
+    mockMvc.perform(get("/studentWithCourseStatus/{studentId}", student.getStudentId()))
+        .andExpect(status().isOk())
+        .andExpect(content().json("""
+            {
+                "student": {
+                    "studentId": "test-id-123",
+                    "name": "テスト太郎",
+                    "furigana": "てすとたろう",
+                    "nickname": "テストさん",
+                    "email": "test@example.com",
+                    "city": "東京",
+                    "age": 100,
+                    "gender": "その他",
+                    "remark": "",
+                    "deleted": false
+                },
+                "studentCourseList": []
+            }
+            """));
+
+    verify(service, times(1)).searchStudentByIdWithStatus(student.getStudentId());
 
   }
 
@@ -297,6 +349,25 @@ class StudentControllerTest {
 
     // MEMO: バリデーションエラーなのでserviceは呼ばれない
     verify(service, times(0)).updateStudent(any(StudentDetail.class));
+
+  }
+
+  @Test
+  void コース申込状況の更新を実行したら更新成功メッセージが返ってくること() throws Exception {
+
+    StudentCourseStatus studentCourseStatus = new StudentCourseStatus();
+    studentCourseStatus.setStatusId("test-id-123");
+    studentCourseStatus.setCourseId("test-id-789");
+    studentCourseStatus.setStatus("受講中");
+
+    // 実行 & 検証
+    mockMvc.perform(put("/updateStudentCourseStatus")
+            .contentType(MediaType.APPLICATION_JSON) //MEMO: Content-Typeを指定。
+            .content(objectMapper.writeValueAsString(studentCourseStatus))) //MEMO: JSONの文字列を指定。StudentDetailをStringにしてくれている。
+        .andExpect(status().isOk())
+        .andExpect(content().string("更新処理が成功しました。"));
+
+    verify(service, times(1)).updateStudentCourseStatus(any(StudentCourseStatus.class));
 
   }
 
