@@ -323,9 +323,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生更新で不正なメールアドレスを入力して実行したら500エラーが返ること() throws Exception {
-    // MEMO: 現在はMethodArgumentNotValidExceptionのハンドラーがないため、GlobalExceptionHandlerのhandleGeneralExceptionで500エラーとなる。
-    // TODO: 将来的には400エラーに修正することを検討。
+  void 受講生更新で不正なメールアドレスを入力して実行したら400エラーが返ること() throws Exception {
 
     Student student = new Student();
     student.setName("更新テスト");
@@ -344,10 +342,8 @@ class StudentControllerTest {
     mockMvc.perform(put("/updateStudent")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(studentDetail)))
-        .andExpect(status().isInternalServerError()) //MEMO: 500エラーを期待
-        .andExpect(content().string("サーバーエラーが発生しました。管理者に連絡してください。"));
+        .andExpect(status().isBadRequest());
 
-    // MEMO: バリデーションエラーなのでserviceは呼ばれない
     verify(service, times(0)).updateStudent(any(StudentDetail.class));
 
   }
@@ -386,14 +382,6 @@ class StudentControllerTest {
     verify(service, times(1)).localDeleteStudent("12345");
 
   }
-
-//  @Test
-//  void 受講生詳細の例外APIが実行できてステータスが400で返ってくること() throws Exception{
-//    // TODO: テスト通ってない。500エラーで返ってくる。
-//    mockMvc.perform(get("/exception"))
-//        .andExpect(status().is4xxClientError())
-//        .andExpect(content().string(""));
-//  }
 
   @Test
   void 受講生詳細の受講生で名前の入力がないときに入力チェックがかかること(){
