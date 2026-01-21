@@ -5,11 +5,12 @@ import org.apache.ibatis.annotations.Mapper;
 import raisetech.studentmanagement.data.StudentCourseStatus;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
+import raisetech.studentmanagement.domain.StudentSearchCondition;
 
 /**
  * 受講生テーブルと受講生コース情報テーブルと紐づくRepositoryです。
  * 受講生情報を扱うリポジトリ
- * 全件検索や単一条件での検索、コース情報の検索が行えクラスです。
+ * 全件検索や単一条件での検索、コース情報の検索が行えるクラスです。
  */
 @Mapper
 public interface StudentRepository {
@@ -51,6 +52,13 @@ public interface StudentRepository {
    * @return 受講生コースIDに紐づくコース申込状況。
    */
   StudentCourseStatus searchStudentCourseStatusById(String courseId);
+
+  /**
+   * 検索条件を行います。
+   * @param condition 受講生検索条件
+   * @return 受講生一覧（検索条件）
+   */
+  List<Student> searchStudentByCondition(StudentSearchCondition condition);
 
   /**
    * 受講生を新規登録します。IDに関しては自動採番を行う（UUID）。
