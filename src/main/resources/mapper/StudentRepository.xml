@@ -15,6 +15,23 @@
     SELECT * FROM students WHERE student_id = #{studentId} AND is_deleted = false
   </select>
 
+  <!--受講生の条件検索。-->
+  <select id="searchStudentByCondition" parameterType="raisetech.studentmanagement.domain.StudentSearchCondition" resultType="raisetech.studentmanagement.data.Student">
+    SELECT * FROM students WHERE is_deleted = false
+
+    <if test="name != null and name != ''">
+      AND name LIKE CONCAT('%', #{name}, '%')
+    </if>
+
+    <if test="city != null and city != ''">
+      AND city = #{city}
+    </if>
+
+    <if test="gender != null and gender != ''">
+      AND gender = #{gender}
+    </if>
+  </select>
+
   <!--受講生のコース情報の全件検索。-->
   <select id="searchStudentCourseList" resultType="raisetech.studentmanagement.data.StudentCourse">
     SELECT * FROM students_courses

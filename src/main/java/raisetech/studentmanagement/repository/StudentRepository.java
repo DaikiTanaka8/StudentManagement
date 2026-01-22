@@ -28,6 +28,13 @@ public interface StudentRepository {
   Student searchStudentById(String studentId);
 
   /**
+   * 受講生の条件検索を行います。
+   * @param studentSearchCondition 受講生検索条件
+   * @return 受講生一覧（検索条件）
+   */
+  List<Student> searchStudentByCondition(StudentSearchCondition studentSearchCondition);
+
+  /**
    * 受講生のコース情報の全件検索を行います。
    * @return 受講生コース情報（全件）。
    */
@@ -52,13 +59,6 @@ public interface StudentRepository {
    * @return 受講生コースIDに紐づくコース申込状況。
    */
   StudentCourseStatus searchStudentCourseStatusById(String courseId);
-
-  /**
-   * 検索条件を行います。
-   * @param condition 受講生検索条件
-   * @return 受講生一覧（検索条件）
-   */
-  List<Student> searchStudentByCondition(StudentSearchCondition condition);
 
   /**
    * 受講生を新規登録します。IDに関しては自動採番を行う（UUID）。
