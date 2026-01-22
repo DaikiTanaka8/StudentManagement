@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 import raisetech.studentmanagement.data.StudentCourseStatus;
+import raisetech.studentmanagement.domain.StudentSearchCondition;
 
 @MybatisTest // この記載のみで自動でロールバックされる。
 class StudentRepositoryTest {
@@ -38,8 +39,8 @@ class StudentRepositoryTest {
     Student actual = sut.searchStudentById("1");
 
     assertThat(actual)
-        .extracting( //MEMO: オブジェクト → 比較用の値リストに変換。
-            Student::getName, //MEMO: 「student -> student.getName()」と同じ意味。
+        .extracting(
+            Student::getName,
             Student::getFurigana,
             Student::getNickname,
             Student::getEmail,
@@ -47,7 +48,7 @@ class StudentRepositoryTest {
             Student::getAge,
             Student::getGender
         )
-        .containsExactly( //MEMO: // 「順番・中身・数すべて一致」かどうか検証している。
+        .containsExactly(
             expected.getName(),
             expected.getFurigana(),
             expected.getNickname(),
@@ -57,6 +58,66 @@ class StudentRepositoryTest {
             expected.getGender()
         );
 
+  }
+
+  @Test
+  void 受講生の名前部分一致による条件検索が行えること() {
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+    studentSearchCondition.setName("鈴木");
+
+    List<Student> actual = sut.searchStudentByCondition(studentSearchCondition);
+
+    assertThat(actual.size()).isEqualTo(1);
+  }
+
+  @Test
+  void 受講生の地域による条件検索が行えること() {
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+    studentSearchCondition.setCity("秋田県");
+
+    List<Student> actual = sut.searchStudentByCondition(studentSearchCondition);
+
+    assertThat(actual.size()).isEqualTo(1);
+  }
+
+  @Test
+  void 受講生の性別による条件検索が行えること() {
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+    studentSearchCondition.setGender("女性");
+
+    List<Student> actual = sut.searchStudentByCondition(studentSearchCondition);
+
+    assertThat(actual.size()).isEqualTo(2);
+  }
+
+  @Test
+  void 複数の条件による受講生の条件検索が行えること() {
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+    studentSearchCondition.setCity("埼玉県");
+    studentSearchCondition.setGender("女性");
+
+    List<Student> actual = sut.searchStudentByCondition(studentSearchCondition);
+
+    assertThat(actual.size()).isEqualTo(1);
+  }
+
+  @Test
+  void 受講生の条件検索で該当がない場合は空リストが返ること() {
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+    studentSearchCondition.setGender("その他");
+
+    List<Student> actual = sut.searchStudentByCondition(studentSearchCondition);
+
+    assertThat(actual.size()).isEqualTo(0);
+  }
+
+  @Test
+  void 受講生の条件検索で条件がない場合は全件のリストが返ること() {
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+
+    List<Student> actual = sut.searchStudentByCondition(studentSearchCondition);
+
+    assertThat(actual.size()).isEqualTo(4);
   }
 
   @Test

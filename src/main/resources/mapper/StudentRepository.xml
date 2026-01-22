@@ -43,7 +43,7 @@
   </select>
 
   <!--コース申込状況の全件検索。-->
-  <select id="searchStudentCourseStatus" resultType="raisetech.studentmanagement.data.StudentCourseStatus">
+  <select id="searchStudentCourseStatusList" resultType="raisetech.studentmanagement.data.StudentCourseStatus">
     SELECT * FROM students_courses_status
   </select>
 
