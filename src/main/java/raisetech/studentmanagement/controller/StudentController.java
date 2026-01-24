@@ -91,6 +91,22 @@ public class StudentController {
   public List<StudentDetail> getStudentListWithStatus() { return service.searchStudentListWithStatus(); }
 
   /**
+   * コース申込状況を含む受講生詳細の条件検索です。
+   *
+   * @return コース申込状況を含む受講生詳細一覧（条件検索）。
+   */
+  @Operation(
+      summary = "コース申込状況を含む受講生の条件検索",
+      description = "コース申込状況を含む受講生の一覧を条件検索します。",
+      tags = {"student-controller" },
+      operationId = "searchStudentListWithStatusByCondition"
+  )
+  @GetMapping("/studentListWithStatus/search")
+  public List<StudentDetail> getStudentListWithStatusByCondition(@RequestBody StudentSearchCondition studentSearchCondition) {
+    return service.searchStudentListWithStatusByCondition(studentSearchCondition);
+  }
+
+  /**
    * 受講生詳細検索です。 IDに紐づく任意の受講生情報を取得します。
    *
    * @param studentId 受講生ID
