@@ -79,6 +79,17 @@ public class StudentService {
   }
 
   /**
+   * コース申込状況を含む受講生詳細の条件検索です。
+   *
+   * @return コース申込状況を含む受講生詳細一覧（条件検索）。
+   */
+  public List<StudentDetail> searchStudentListWithStatusByCondition(StudentSearchCondition studentSearchCondition) {
+    List<Student> studentListByCondition = repository.searchStudentByCondition(studentSearchCondition);
+    List<StudentCourse> studentCourseList = studentCourseListWithStatus();
+    return converter.convertStudentDetails(studentListByCondition, studentCourseList);
+  }
+
+  /**
    * 受講生詳細検索です。
    *
    * @param studentId 受講生ID
