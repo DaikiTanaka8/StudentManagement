@@ -30,7 +30,7 @@ public interface StudentRepository {
   /**
    * 受講生の条件検索を行います。
    * @param studentSearchCondition 受講生検索条件
-   * @return 受講生一覧（検索条件）
+   * @return 受講生一覧（条件検索）
    */
   List<Student> searchStudentByCondition(StudentSearchCondition studentSearchCondition);
 

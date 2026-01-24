@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.studentmanagement.data.StudentCourseStatus;
+import raisetech.studentmanagement.domain.StudentSearchCondition;
 import raisetech.studentmanagement.domain.assembler.StudentCourseAssembler;
 import raisetech.studentmanagement.domain.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
@@ -43,15 +44,16 @@ public class StudentService {
     return converter.convertStudentDetails(studentList, studentCourseList);
   }
 
-//  /**
-//   * コース申込状況の一覧検索です。
-//   *
-//   * @return コース申込状況一覧（全件）。
-//   */
-//  public List<StudentCourseStatus> searchStudentCourseStatusList(){
-//    List<StudentCourseStatus> studentCourseStatusList = repository.searchStudentCourseStatus();
-//    return studentCourseStatusList;
-//  }
+  /**
+   * 受講生詳細の条件検索です。
+   *
+   * @return 受講生詳細一覧（条件検索）。
+   */
+  public List<StudentDetail> searchStudentListByCondition(StudentSearchCondition studentSearchCondition) {
+    List<Student> studentListByCondition = repository.searchStudentByCondition(studentSearchCondition);
+    List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
+    return converter.convertStudentDetails(studentListByCondition, studentCourseList);
+  }
 
   /**
    * コース申込状況を含む受講生コース情報の一覧検索です。
