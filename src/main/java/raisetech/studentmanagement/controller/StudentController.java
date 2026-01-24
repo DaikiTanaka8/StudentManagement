@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.studentmanagement.data.StudentCourseStatus;
 import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.domain.StudentSearchCondition;
 import raisetech.studentmanagement.service.StudentService;
 
 /**
@@ -57,6 +58,22 @@ public class StudentController {
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentList() {
     return service.searchStudentList();
+  }
+
+  /**
+   * 受講生詳細の条件検索です。
+   *
+   * @return 受講生詳細一覧（条件検索）。
+   */
+  @Operation(
+      summary = "受講生の条件検索",
+      description = "受講生の一覧を条件検索します。",
+      tags = {"student-controller" },
+      operationId = "searchStudentListByCondition"
+  )
+  @GetMapping("/studentList/search")
+  public List<StudentDetail> getStudentListByCondition(@RequestBody StudentSearchCondition studentSearchCondition) {
+    return service.searchStudentListByCondition(studentSearchCondition);
   }
 
   /**
