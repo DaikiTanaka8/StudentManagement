@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.studentmanagement.data.StudentCourseStatus;
+import raisetech.studentmanagement.domain.StudentSearchCondition;
 import raisetech.studentmanagement.domain.assembler.StudentCourseAssembler;
 import raisetech.studentmanagement.domain.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
@@ -68,6 +69,24 @@ class StudentServiceTest {
   }
 
   @Test
+  void 受講生詳細の条件検索_リポジトリとコンバーターの処理が適切に呼び出せていること() {
+    // 事前準備
+    List<Student> studentListByCondition = new ArrayList<>();
+    List<StudentCourse> studentCourseList = new ArrayList<>();
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+    Mockito.when(repository.searchStudentByCondition(studentSearchCondition)).thenReturn(studentListByCondition);
+    Mockito.when(repository.searchStudentCourseList()).thenReturn(studentCourseList);
+
+    // 実行
+    sut.searchStudentListByCondition(studentSearchCondition);
+
+    // 検証
+    Mockito.verify(repository, times(1)).searchStudentByCondition(studentSearchCondition);
+    Mockito.verify(repository, times(1)).searchStudentCourseList();
+    Mockito.verify(converter, times(1)).convertStudentDetails(studentListByCondition, studentCourseList);
+  }
+
+  @Test
   void コース申込状況を含む受講生コース情報の一覧検索_リポジトリとアセンブラーの処理が適切に呼び出されていること(){
     // 事前準備
     List<StudentCourse> studentCourseList = new ArrayList<>();
@@ -108,6 +127,34 @@ class StudentServiceTest {
     Mockito.verify(repository, times(1)).searchStudentCourseStatusList();
     Mockito.verify(studentCourseAssembler, times(1)).assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
     Mockito.verify(converter, times(1)).convertStudentDetails(studentList, assembledList);
+    assertThat(actual).isSameAs(expected);
+  }
+
+  @Test
+  void コース申込状況を含む受講生詳細の条件検索_リポジトリとアセンブラーとコンバーターらの依存コンポーネントが正しく呼び出せていること(){
+    // 事前準備
+    List<Student> studentListByCondition = new ArrayList<>();
+    List<StudentCourse> studentCourseList = new ArrayList<>();
+    List<StudentCourseStatus> studentCourseStatusList = new ArrayList<>();
+    List<StudentCourse> assembledList = new ArrayList<>();
+    List<StudentDetail> expected = new ArrayList<>();
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+
+    Mockito.when(repository.searchStudentByCondition(studentSearchCondition)).thenReturn(studentListByCondition);
+    Mockito.when(repository.searchStudentCourseList()).thenReturn(studentCourseList);
+    Mockito.when(repository.searchStudentCourseStatusList()).thenReturn(studentCourseStatusList);
+    Mockito.when(studentCourseAssembler.assembleCourseListWithStatus(studentCourseList, studentCourseStatusList)).thenReturn(assembledList);
+    Mockito.when(converter.convertStudentDetails(studentListByCondition, assembledList)).thenReturn(expected);
+
+    // 実行
+    List<StudentDetail> actual = sut.searchStudentListWithStatusByCondition(studentSearchCondition);
+
+    // 検証
+    Mockito.verify(repository, times(1)).searchStudentByCondition(studentSearchCondition);
+    Mockito.verify(repository, times(1)).searchStudentCourseList();
+    Mockito.verify(repository, times(1)).searchStudentCourseStatusList();
+    Mockito.verify(studentCourseAssembler, times(1)).assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
+    Mockito.verify(converter, times(1)).convertStudentDetails(studentListByCondition, assembledList);
     assertThat(actual).isSameAs(expected);
   }
 
