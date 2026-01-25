@@ -28,7 +28,6 @@ import raisetech.studentmanagement.data.StudentCourse;
 import raisetech.studentmanagement.data.StudentCourseStatus;
 import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.domain.StudentSearchCondition;
-import raisetech.studentmanagement.domain.assembler.StudentCourseAssembler;
 import raisetech.studentmanagement.repository.StudentRepository;
 import raisetech.studentmanagement.service.StudentService;
 

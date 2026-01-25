@@ -33,6 +33,6 @@ public class StudentSearchCondition {
 
     // フェーズ3：さらに将来
     // @Schema(description = "検索条件の結合方法（AND/OR）")
-    // private SearchOperator operator;  // AND or OR
+    // private SearchOperator operator;  // ANDかOR
 
 }

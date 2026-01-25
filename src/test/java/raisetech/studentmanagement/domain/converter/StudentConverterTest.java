@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 import raisetech.studentmanagement.domain.StudentDetail;
-import raisetech.studentmanagement.domain.converter.StudentConverter;
 
 class StudentConverterTest {
 
