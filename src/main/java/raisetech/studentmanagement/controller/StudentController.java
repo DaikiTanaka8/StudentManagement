@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -71,7 +72,7 @@ public class StudentController {
       tags = {"student-controller" },
       operationId = "searchStudentListByCondition"
   )
-  @GetMapping("/studentList/search")
+  @PostMapping("/studentList/search")
   public List<StudentDetail> getStudentListByCondition(@RequestBody StudentSearchCondition studentSearchCondition) {
     return service.searchStudentListByCondition(studentSearchCondition);
   }
@@ -101,7 +102,7 @@ public class StudentController {
       tags = {"student-controller" },
       operationId = "searchStudentListWithStatusByCondition"
   )
-  @GetMapping("/studentListWithStatus/search")
+  @PostMapping("/studentListWithStatus/search")
   public List<StudentDetail> getStudentListWithStatusByCondition(@RequestBody StudentSearchCondition studentSearchCondition) {
     return service.searchStudentListWithStatusByCondition(studentSearchCondition);
   }

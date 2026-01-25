@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -26,6 +27,7 @@ import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 import raisetech.studentmanagement.data.StudentCourseStatus;
 import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.domain.StudentSearchCondition;
 import raisetech.studentmanagement.domain.assembler.StudentCourseAssembler;
 import raisetech.studentmanagement.repository.StudentRepository;
 import raisetech.studentmanagement.service.StudentService;
@@ -77,7 +79,31 @@ class StudentControllerTest {
   }
 
   @Test
-  void コース申込状況を含む受講生詳細の一覧検索が実行できてからのリストが返ってくること() throws Exception {
+  void 受講生詳細の条件検索が実行できて空のリストが返ってくること() throws Exception {
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+    studentSearchCondition.setName("テスト太郎");
+    Mockito.when(service.searchStudentListByCondition(any())).thenReturn(List.of());
+
+    mockMvc.perform(post("/studentList/search")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(studentSearchCondition)))
+        .andExpect(status().isOk())
+        .andExpect(content().json("[]"));
+
+    verify(service, times(1)).searchStudentListByCondition(any());
+  }
+
+  @Test
+  void コース申込状況を含む受講生詳細の一覧検索が実行できて空のリストが返ってくること() throws Exception {
+    mockMvc.perform(get("/studentListWithStatus"))
+        .andExpect(status().isOk())
+        .andExpect(content().json("[]"));
+
+    verify(service, times(1)).searchStudentListWithStatus();
+  }
+
+  @Test
+  void コース申込状況を含む受講生詳細の条件検索が実行できて空のリストが返ってくること() throws Exception {
     mockMvc.perform(get("/studentListWithStatus"))
         .andExpect(status().isOk())
         .andExpect(content().json("[]"));
