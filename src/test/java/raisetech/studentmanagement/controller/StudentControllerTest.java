@@ -104,11 +104,17 @@ class StudentControllerTest {
 
   @Test
   void コース申込状況を含む受講生詳細の条件検索が実行できて空のリストが返ってくること() throws Exception {
-    mockMvc.perform(get("/studentListWithStatus"))
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+    studentSearchCondition.setName("テスト太郎");
+    Mockito.when(service.searchStudentListWithStatusByCondition(any())).thenReturn(List.of());
+
+    mockMvc.perform(post("/studentListWithStatus/search")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(studentSearchCondition)))
         .andExpect(status().isOk())
         .andExpect(content().json("[]"));
 
-    verify(service, times(1)).searchStudentListWithStatus();
+    verify(service, times(1)).searchStudentListWithStatusByCondition(any());
   }
 
   @Test
