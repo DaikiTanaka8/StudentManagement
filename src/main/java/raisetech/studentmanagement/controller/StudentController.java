@@ -143,7 +143,7 @@ public class StudentController {
       summary = "コース申込状況を含む単一の受講生詳細の検索",
       description = "指定したIDのコース申込状況を含む受講生詳細情報を取得します。",
       tags = {"student-controller" },
-      operationId = "searchStudentById",
+      operationId = "searchStudentWithCourseStatusById",
       parameters = {
           @Parameter(
               name = "studentId",
