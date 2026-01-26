@@ -6,7 +6,10 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import raisetech.studentmanagement.controller.converter.StudentConverter;
+import raisetech.studentmanagement.data.StudentCourseStatus;
+import raisetech.studentmanagement.domain.StudentSearchCondition;
+import raisetech.studentmanagement.domain.assembler.StudentCourseAssembler;
+import raisetech.studentmanagement.domain.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 import raisetech.studentmanagement.domain.StudentDetail;
@@ -14,44 +17,114 @@ import raisetech.studentmanagement.repository.StudentRepository;
 
 /**
  * 受講生情報を取り扱うサービスです。 受講生の検索や登録・更新処理を行います。
- *  //MEMO: 業務処理：コントローラーがリクエストを受け取る→☆サービスは具体的な処理を行う。→DBで呼び出す。
+ *
  */
-@Service //MEMO: これをつけることでSpringが認識してくれる。
+@Service
 public class StudentService {
 
-  private StudentRepository repository;
-  private StudentConverter converter;
+  private final StudentRepository repository;
+  private final StudentConverter converter;
+  private final StudentCourseAssembler studentCourseAssembler;
 
-  @Autowired //MEMO: Springが管理しているインスタンスやクラスを自動で管理してくれる。自動でインスタンス生成したり→自分でnewしなくて済むからコードがキレイ。コンストラクタインジェクション。
-  public StudentService(StudentRepository repository,
-      StudentConverter converter) { //MEMO: 上で書いた「private StudentRepository repository;」を呼び出すためにコンストラクターを生成している。インスタンス化する直前で書いている。
-    this.repository = repository;   // ↑この引数は誰がどうやって持たせる？→newしてないのに使えているのは、SpringBootが自動で生成している。
+  @Autowired
+  public StudentService(StudentRepository repository, StudentConverter converter, StudentCourseAssembler studentCourseAssembler) {
+    this.repository = repository;
     this.converter = converter;
+    this.studentCourseAssembler = studentCourseAssembler;
   }
 
   /**
    * 受講生詳細の一覧検索です。 全件検索を行うので、条件指定は行いません。
    *
-   * @return 受講生詳細一覧（全件）。全件検索した受講生詳細情報一覧
+   * @return 受講生詳細一覧（全件）。
    */
   public List<StudentDetail> searchStudentList() {
     List<Student> studentList = repository.searchStudent();
-    List<StudentCourse> studentCourseList = repository.searchStudentCourseList(); //MEMO: この行と一つ上の行でで受講生情報と受講生コース情報の全件が取れてきている。
+    List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
     return converter.convertStudentDetails(studentList, studentCourseList);
-    //MEMO: 「convertStudentDetails」→引数のstudentListとstudentCoursesListで全件取得を引っ張ってきて、それをコンバートしている。
   }
 
   /**
-   * 受講生詳細検索です。//MEMO: IDに紐づく受講生情報を取得した後、その受講生に紐づく受講生コース情報を取得して設定します。 講義30でつくったやつ。
+   * 受講生詳細の条件検索です。
+   *
+   * @return 受講生詳細一覧（条件検索）。
+   */
+  public List<StudentDetail> searchStudentListByCondition(StudentSearchCondition studentSearchCondition) {
+    List<Student> studentListByCondition = repository.searchStudentByCondition(studentSearchCondition);
+    List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
+    return converter.convertStudentDetails(studentListByCondition, studentCourseList);
+  }
+
+  /**
+   * コース申込状況を含む受講生コース情報の一覧検索です。
+   *
+   * @return コース申込状況を含む受講生コース一覧（全件）。
+   */
+  public List<StudentCourse> studentCourseListWithStatus(){
+    List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
+    List<StudentCourseStatus> studentCourseStatusList =repository.searchStudentCourseStatusList();
+
+    return studentCourseAssembler.assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
+  }
+
+  /**
+   * コース申込状況を含む受講生詳細の一覧検索です。 全件検索を行うので、条件指定は行いません。
+   *
+   * @return コース申込状況を含む受講生詳細一覧（全件）。
+   */
+  public List<StudentDetail> searchStudentListWithStatus() {
+    List<Student> studentList = repository.searchStudent();
+    List<StudentCourse> studentCourseList = studentCourseListWithStatus();
+    return converter.convertStudentDetails(studentList, studentCourseList);
+  }
+
+  /**
+   * コース申込状況を含む受講生詳細の条件検索です。
+   *
+   * @return コース申込状況を含む受講生詳細一覧（条件検索）。
+   */
+  public List<StudentDetail> searchStudentListWithStatusByCondition(StudentSearchCondition studentSearchCondition) {
+    List<Student> studentListByCondition = repository.searchStudentByCondition(studentSearchCondition);
+    List<StudentCourse> studentCourseList = studentCourseListWithStatus();
+    return converter.convertStudentDetails(studentListByCondition, studentCourseList);
+  }
+
+  /**
+   * 受講生詳細検索です。
    *
    * @param studentId 受講生ID
-   * @return IDで検索した受講生詳細情報（単一の受講生情報）+受講生コース情報。（StudentDetailで返っている！）
+   * @return IDで検索した受講生詳細情報（単一の受講生情報+受講生コース情報）。
    */
   public StudentDetail searchStudentById(String studentId) {
     Student student = repository.searchStudentById(studentId);
-    List<StudentCourse> studentCourseList = repository.searchStudentCourseListById(
-        student.getStudentId());
+    List<StudentCourse> studentCourseList = repository.searchStudentCourseListById(student.getStudentId());
     return new StudentDetail(student, studentCourseList);
+  }
+
+  /**
+   * コース申込状況の検索です。
+   *
+   * @param courseId 受講生コース情報ID。
+   * @return IDで検索したコースの申込状況。
+   */
+  public StudentCourseStatus searchStudentCourseStatusById(String courseId){
+    StudentCourseStatus studentCourseStatus = repository.searchStudentCourseStatusById(courseId);
+    return studentCourseStatus;
+  }
+
+  /**
+   * コース申込状況を含む受講生詳細検索です。
+   *
+   * @param studentId 受講生ID
+   * @return IDで検索した受講生詳細情報（単一の受講生情報+受講生コース情報+コース申込状況）。
+   */
+  public StudentDetail searchStudentByIdWithStatus(String studentId) {
+    Student student = repository.searchStudentById(studentId);
+    List<StudentCourse> studentCourseList = repository.searchStudentCourseListById(student.getStudentId());
+    List<StudentCourseStatus> studentCourseStatusList = repository.searchStudentCourseStatusList();
+    List<StudentCourse> assembledList = studentCourseAssembler.assembleCourseListWithStatus(studentCourseList, studentCourseStatusList);
+
+    return new StudentDetail(student, assembledList);
   }
 
   /**
@@ -61,35 +134,51 @@ public class StudentService {
    * @param studentDetail 受講生詳細
    * @return 登録情報を付与した受講生詳細
    */
-  @Transactional //MEMO: サービスで登録したり更新をしたり削除したりする時に必ずつける！
-  //MEMO: トランザクション管理、途中でエラーになったら登録内容を戻す。サービスに入れる。（片方登録されてもう片方は登録されない、というのを防ぐ。）
-  // registerStudentをStudentDetailで返して、StudentIdを取れるようにする。
+  @Transactional
   public StudentDetail registerStudent(StudentDetail studentDetail) {
-    Student student = studentDetail.getStudent(); //MEMO: 「studentDetail.getStudent()」という記述が何箇所かあったので、変数の導入でスッキリさせる。
-    student.setStudentId(UUID.randomUUID().toString()); //MEMO: ここでIDを設定。UUIDを自動採番。
+    Student student = studentDetail.getStudent();
+    student.setStudentId(UUID.randomUUID().toString());
+    repository.registerStudent(student);
 
-    repository.registerStudent(student); //MEMO: ここで実際の登録処理。repositoryを呼び分ける。
-    studentDetail.getStudentCourseList().forEach(studentCourse -> { //MEMO: 今回はListで渡さないから、ループさせないといけない。
-      initStudentCourse(studentCourse, student); //MEMO: ごちゃっとした処理はメソッドの抽出でまとめてスッキリさせる。
+    studentDetail.getStudentCourseList().forEach(studentCourse -> {
+      initStudentCourse(studentCourse, student);
       repository.registerStudentCourse(studentCourse);
+
+      StudentCourseStatus studentCourseStatus = initStudentCourseStatus(studentCourse);
+      studentCourse.setCourseStatus(studentCourseStatus);
+      repository.registerStudentCourseStatus(studentCourseStatus);
     });
+
     return studentDetail;
   }
 
   /**
    * 受講生コース情報を登録する際の初期情報を設定する。
-   * //MEMO: 勝手に作ったメソッドはprivateにしておく。使うメソッドのすぐ下に置いたり、一番下に置いたり、ケースバイケース。
    *
    * @param studentCourse 受講生コース情報
    * @param student 受講生
    */
   private void initStudentCourse(StudentCourse studentCourse, Student student) {
-    LocalDate now = LocalDate.now(); //MEMO: これも２箇所あったから変数の導入を行う。
+    LocalDate now = LocalDate.now();
 
-    studentCourse.setCourseId(UUID.randomUUID().toString()); //MEMO: コースIDもUUIDで自動で設定するようにした。
-    studentCourse.setStudentId(student.getStudentId()); //MEMO: ここでさっき設定された受講生のIDを取ってくる。
+    studentCourse.setCourseId(UUID.randomUUID().toString());
+    studentCourse.setStudentId(student.getStudentId());
     studentCourse.setStartDate(now);
     studentCourse.setEndDate(now.plusYears(1));
+  }
+
+  /**
+   * コース申込状況を登録する際の初期情報を設定する。（初期値：仮申込）
+   *
+   * @param studentCourse 受講生コース情報
+   * @return コース申込状況
+   */
+  private StudentCourseStatus initStudentCourseStatus(StudentCourse studentCourse) {
+    StudentCourseStatus studentCourseStatus = new StudentCourseStatus();
+    studentCourseStatus.setStatusId(UUID.randomUUID().toString());
+    studentCourseStatus.setCourseId(studentCourse.getCourseId());
+    studentCourseStatus.setStatus("仮申込");
+    return studentCourseStatus;
   }
 
   /**
@@ -98,7 +187,7 @@ public class StudentService {
    *
    * @param studentDetail 受講生詳細
    */
-  @Transactional //MEMO: サービスで登録したり更新をしたり削除したりする時に必ずつける！！
+  @Transactional
   public void updateStudent(StudentDetail studentDetail) {
     repository.updateStudent(studentDetail.getStudent());
     studentDetail.getStudentCourseList()
@@ -106,11 +195,21 @@ public class StudentService {
   }
 
   /**
+   * コース申込状況の更新を行います。
+   *
+   * @param studentCourseStatus コース申込状況
+   */
+  @Transactional
+  public void updateStudentCourseStatus(StudentCourseStatus studentCourseStatus){
+    repository.updateStudentCourseStatus(studentCourseStatus);
+  }
+
+  /**
    * 受講生詳細の削除（論理削除）を行います。
    *
    * @param studentId 受講生ID
    */
-  @Transactional //MEMO: サービスで登録したり更新をしたり削除したりする時に必ずつける！！
+  @Transactional
   public void localDeleteStudent(String studentId) {
     repository.localDeleteStudent(studentId);
   }

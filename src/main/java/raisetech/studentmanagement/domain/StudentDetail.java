@@ -10,7 +10,6 @@ import lombok.Setter;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 
-//MEMO: 画面に出す項目。StudentとStudentListの情報をまとめたクラス。
 @Schema(description = "受講生詳細")
 @Getter
 @Setter
@@ -19,9 +18,9 @@ import raisetech.studentmanagement.data.StudentCourse;
 public class StudentDetail {
 
   @Valid
-  private Student student; //MEMO: こっちは単一。
+  private Student student;
 
   @Valid
-  private List<StudentCourse> studentCourseList; //MEMO: StudentCourseはStudentに対して複数入る可能性があるためListとなる。
+  private List<StudentCourse> studentCourseList;
 
 }

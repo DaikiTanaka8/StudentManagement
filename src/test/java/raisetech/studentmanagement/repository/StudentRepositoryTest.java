@@ -1,7 +1,6 @@
 package raisetech.studentmanagement.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -10,8 +9,10 @@ import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
+import raisetech.studentmanagement.data.StudentCourseStatus;
+import raisetech.studentmanagement.domain.StudentSearchCondition;
 
-@MybatisTest //MEMO: ←これだけで自動でロールバックされている。
+@MybatisTest // この記載のみで自動でロールバックされる。
 class StudentRepositoryTest {
 
   @Autowired
@@ -38,8 +39,8 @@ class StudentRepositoryTest {
     Student actual = sut.searchStudentById("1");
 
     assertThat(actual)
-        .extracting( //MEMO: オブジェクト → 比較用の値リストに変換。
-            Student::getName, //MEMO: 「student -> student.getName()」と同じ意味。
+        .extracting(
+            Student::getName,
             Student::getFurigana,
             Student::getNickname,
             Student::getEmail,
@@ -47,7 +48,7 @@ class StudentRepositoryTest {
             Student::getAge,
             Student::getGender
         )
-        .containsExactly( //MEMO: // 「順番・中身・数すべて一致」かどうか検証している。
+        .containsExactly(
             expected.getName(),
             expected.getFurigana(),
             expected.getNickname(),
@@ -57,6 +58,66 @@ class StudentRepositoryTest {
             expected.getGender()
         );
 
+  }
+
+  @Test
+  void 受講生の名前部分一致による条件検索が行えること() {
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+    studentSearchCondition.setName("鈴木");
+
+    List<Student> actual = sut.searchStudentByCondition(studentSearchCondition);
+
+    assertThat(actual.size()).isEqualTo(1);
+  }
+
+  @Test
+  void 受講生の地域による条件検索が行えること() {
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+    studentSearchCondition.setCity("秋田県");
+
+    List<Student> actual = sut.searchStudentByCondition(studentSearchCondition);
+
+    assertThat(actual.size()).isEqualTo(1);
+  }
+
+  @Test
+  void 受講生の性別による条件検索が行えること() {
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+    studentSearchCondition.setGender("女性");
+
+    List<Student> actual = sut.searchStudentByCondition(studentSearchCondition);
+
+    assertThat(actual.size()).isEqualTo(2);
+  }
+
+  @Test
+  void 複数の条件による受講生の条件検索が行えること() {
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+    studentSearchCondition.setCity("埼玉県");
+    studentSearchCondition.setGender("女性");
+
+    List<Student> actual = sut.searchStudentByCondition(studentSearchCondition);
+
+    assertThat(actual.size()).isEqualTo(1);
+  }
+
+  @Test
+  void 受講生の条件検索で該当がない場合は空リストが返ること() {
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+    studentSearchCondition.setGender("その他");
+
+    List<Student> actual = sut.searchStudentByCondition(studentSearchCondition);
+
+    assertThat(actual.size()).isEqualTo(0);
+  }
+
+  @Test
+  void 受講生の条件検索で条件がない場合は全件のリストが返ること() {
+    StudentSearchCondition studentSearchCondition = new StudentSearchCondition();
+
+    List<Student> actual = sut.searchStudentByCondition(studentSearchCondition);
+
+    assertThat(actual.size()).isEqualTo(4);
   }
 
   @Test
@@ -88,6 +149,24 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void コース申込状況の全件検索が行えること(){
+    List<StudentCourseStatus> actual = sut.searchStudentCourseStatusList();
+    assertThat(actual.size()).isEqualTo(10);
+  }
+
+  @Test
+  void コースIDに紐づくコース申込状況の検索が行えること() {
+    StudentCourseStatus expected = new StudentCourseStatus();
+    expected.setStatusId("201");
+    expected.setCourseId("101");
+    expected.setStatus("仮申込");
+
+    StudentCourseStatus actual = sut.searchStudentCourseStatusById("101");
+
+    assertThat(actual.getStatus()).isEqualTo(expected.getStatus());
+  }
+
+  @Test
   void 受講生の登録が行えること() {
     Student student = new Student();
     student.setStudentId("test-id-123");
@@ -104,7 +183,7 @@ class StudentRepositoryTest {
 
     List<Student> actual = sut.searchStudent();
 
-    //MEMO: 登録後studentsの数が1つ増えているということを確認する。
+    // 登録後studentsの数が1つ増えている(4->5)ということを確認する。
     assertThat(actual.size()).isEqualTo(5);
   }
 
@@ -121,7 +200,22 @@ class StudentRepositoryTest {
 
     List<StudentCourse> actual = sut.searchStudentCourseList();
 
-    //MEMO: 登録後students_coursesの数が1つ増えているということを確認する。
+    // 登録後students_coursesの数が1つ増えている(10->11)ということを確認する。
+    assertThat(actual.size()).isEqualTo(11);
+  }
+
+  @Test
+  void コース申込状況の登録が行えること() {
+    StudentCourseStatus studentCourseStatus = new StudentCourseStatus();
+    studentCourseStatus.setStatusId("test-id-201");
+    studentCourseStatus.setCourseId("test-id-101");
+    studentCourseStatus.setStatus("受講中");
+
+    sut.registerStudentCourseStatus(studentCourseStatus);
+
+    List<StudentCourseStatus> actual = sut.searchStudentCourseStatusList();
+
+    // 登録後students_courses_statusの数が1つ増えている(10->11)ということを確認する。
     assertThat(actual.size()).isEqualTo(11);
   }
 
@@ -181,13 +275,25 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void コース申込状況の更新が行えること() {
+    StudentCourseStatus studentCourseStatus = new StudentCourseStatus();
+    studentCourseStatus.setStatusId("201");
+    studentCourseStatus.setStatus("本申込");
+    sut.updateStudentCourseStatus(studentCourseStatus);
+
+    StudentCourseStatus searchStudentCourseStatusById = sut.searchStudentCourseStatusById("101");
+
+    assertThat(searchStudentCourseStatusById.getStatus()).isEqualTo("本申込");
+
+  }
+
+  @Test
   void 受講生の論理削除が行えること() {
 
     sut.localDeleteStudent("1");
 
     List<Student> actual = sut.searchStudent();
 
-    //MEMO: 登録後studentsの数が1つ減っているということを確認する。
     assertThat(actual.size()).isEqualTo(3);
   }
 

@@ -1,9 +1,12 @@
 package raisetech.studentmanagement.exception;
 
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -59,6 +62,25 @@ public class GlobalExceptionHandler {
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     //MEMO: .statsでステータス指定、HTTPステータスでノットファウンドリクエスト404番、.bodyで中身を作れる、今回はゲットメッセージでそのままメッセージを表示する。
+  }
+
+  /**
+   * MethodArgumentNotValidException用のハンドラです。
+   * @param ex 実際に発生した例外オブジェクト
+   * @return 400BAD_REQUESTを返す
+   */
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
+    logger.warn("バリデーションエラーが発生しました: {}", ex.getMessage());
+
+    BindingResult bindingResult = ex.getBindingResult();
+
+    String errorMessage = bindingResult.getFieldErrors()
+        .stream()
+        .map(error -> error.getField() + ": " + error.getDefaultMessage())
+        .collect(Collectors.joining(", "));
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
   }
 
   /**
