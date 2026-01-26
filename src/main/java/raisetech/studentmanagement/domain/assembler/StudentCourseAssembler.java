@@ -12,6 +12,8 @@ public class StudentCourseAssembler {
 
   /**
    * 全件の受講生コース情報にコース申込状況を紐づけるメソッドです。
+   * 注意：同一のcourseIdに対して複数のstatusが存在する場合、最後に処理されたstatusで上書きされます。
+   * 現在の要件では１コース；１ステータスのため、この挙動で問題ありません。
    *
    * @param studentCourseList 受講生コース情報リスト
    * @param studentCourseStatusList コース申込状況リスト
