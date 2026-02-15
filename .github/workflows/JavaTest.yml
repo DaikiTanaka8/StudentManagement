@@ -28,8 +28,10 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
-    - name: Build with Gradle Wrapper
+    - name: Test with Gradle Wrapper
       run: ./gradlew test
+    - name: Build with Gradle Wrapper
+      run: ./gradlew bootJar
 
   deploy:
     runs-on: ubuntu-latest
@@ -42,11 +44,7 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
-      - name: Test with Gradle Wrapper
-        run: ./gradlew test
 
-      - name: Build with Gradle Wrapper
-        run: ./gradlew bootJar
       - name: SCP Copy Application to EC2
         env:
           PRIVATE_KEY: ${{ secrets.AWS_EC2_PRIVATE_KEY }}
@@ -63,6 +61,28 @@ jobs:
           envs: DEST_PATH
           script: |
             sudo yum update -y
+            if [ -f /etc/systemd/system/StudentManagement.service ]; then
+             echo "already exists Service File"
+            else
+             cat <<EOL | sudo tee -a /etc/systemd/system/StudentManagement.service
+             [Unit]
+             Description = StudentManagement App
+          
+             [Service]
+              ExecStart = java -jar ${DEST_PATH}
+              EnvironmentFile = /etc/sysconfig/StudentManagement
+              Restart = no
+              Type = simple
+              User = ec2-user
+              Group = ec2-user
+              SuccessExitStatus = 143
+          
+            [Install]
+            WantedBy = multi-user.target
+            EOL
+            fi
+          
+            sudo systemctl daemon-reload
             if sudo systemctl status StudentManagement 2>&1 | grep "Active: active (running)" ; then
             sudo systemctl restart StudentManagement
             else
