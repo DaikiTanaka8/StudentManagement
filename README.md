@@ -1,8 +1,8 @@
 # StudentManagement（受講生管理システム）
 
 ## 概要
-受講生・コース・申し込み情報を管理するバックエンドAPIアプリケーションです。  
-SpringBootを用いて開発し、AWS上にデプロイしています。  
+受講生・コース・申し込み情報を管理するバックエンドAPIアプリケーションです。
+SpringBootを用いて開発し、AWS上にデプロイしています。
 
 ---
 
@@ -20,24 +20,24 @@ SpringBootを用いて開発し、AWS上にデプロイしています。
 ## 使用技術
 
 ### バックエンド
-- Java  
-- Spring Boot  
-- MyBatis  
-- Lombok  
+- Java
+- Spring Boot
+- MyBatis
+- Lombok
 
 ### インフラ
-- AWS（EC2 / RDS / ALB）  
-- MySQL  
+- AWS（EC2 / RDS / ALB）
+- MySQL
 
 ### CI/CD
-- GitHub Actions  
-- systemd によるサービス管理  
+- GitHub Actions
+- systemd によるサービス管理
 
 ### 開発ツール
-- Postman  
-- Swagger  
-- IntelliJ IDEA  
-- GitHub  
+- Postman
+- Swagger
+- IntelliJ IDEA
+- GitHub
 
 ---
 
@@ -62,8 +62,9 @@ SpringBootを用いて開発し、AWS上にデプロイしています。
 
 ## 利用方法
 
-本アプリはバックエンドAPIのみを実装しており、フロントエンドは含まれていません。  
-APIの動作確認にはPostmanなどのAPIクライアントを使用してください。  
+本アプリはバックエンドAPIのみを実装しており、フロントエンドは含まれていません。
+APIの動作確認にはPostmanなどのAPIクライアントを使用してください。
+普段はリソース管理のためサーバーは閉じています。
 
 ---
 
@@ -71,25 +72,26 @@ APIの動作確認にはPostmanなどのAPIクライアントを使用してく�
 
 GitHub Actions により以下を自動化しています。
 
-- ビルド  
-- テスト  
-- EC2 へのデプロイ  
+- ビルド
+- テスト
+- EC2 へのデプロイ
 
 ---
 
 ## 今後の改善予定
 
-- フロントエンドの実装  
-- 検索機能の拡張  
-- セキュリティ強化  
-- UIの追加  
+- フロントエンドの実装
+- 検索機能の拡張
+- セキュリティ強化
+- UIの追加
 
 ---
 
 ## 注意事項
 
-本アプリは学習目的で作成したものです。  
-利用によって発生した問題について責任は負いかねます。  
+本アプリは学習目的で作成したものです。
+利用によって発生した問題について責任は負いかねます。
+お問い合わせはd28k8.vpm.ccc@gmail.comまでご連絡いただけますと幸いです。
 
 ---
 
