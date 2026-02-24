@@ -1,3 +1,9 @@
+<!--
+【学習履歴】
+本ファイルは Thymeleaf による画面実装の学習時に作成したものです。
+現在のアプリケーションは REST API として運用しているため使用していません。
+-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <head>
@@ -18,48 +24,36 @@
   <table>
     <thead>
     <tr>
-      <th></th> <!-- 左端は項目名の列と揃えるため空にする -->
+      <th></th>
       <th>現在の情報</th>
       <th>更新欄</th>
     </tr>
     </thead>
     <tbody>
-    <!-- ID 行 -->
+
     <tr>
       <th>ID</th>
       <td th:text="*{student.studentId}">1</td>
-      　  <!-- 左列：現在の情報を表示するだけ -->
-      <td>  <!-- 右列：フォームに含めるための hidden + 表示用 -->
+      <td>
         <input type="hidden" th:field="*{student.studentId}"/>
-        <!--ユーザーには見えないが、フォーム送信時に studentId が一緒に送信される。-->
-        <span th:text="*{student.studentId}">1</span> <!--画面上に「ID」を表示（ユーザーが見られる）。-->
+        <span th:text="*{student.studentId}">1</span>
       </td>
     </tr>
 
-    <!-- 名前 行 -->
     <tr>
       <th>名前</th>
       <td th:text="*{student.name}">山田太郎</td>
       <td>
-        <div> <!--一つのまとまり、というもの。-->
-          <label for="name"></label> <!--ラベルの名前。nameですよ。studentDetailの要素と合わせなければならない。-->
+        <div>
+          <label for="name"></label>
           <input type="text" id="name" th:field="*{student.name}"
                  required oninvalid="this.setCustomValidity('名前を入力してください')"
                  oninput="this.setCustomValidity('')">
-          <!--「required oninvalid」入力が空でinvalidになった時メッセージを上書き-->
-          <!--「oninput="this.setCustomValidity('')"」入力されたらカスタムメッセージをクリアして通常状態を戻す。-->
-          <!--input：入力項目。テキスト入力する項目。
-              「th:field」：「${studentDetail}」に紐づくフィールド名はなんなのか。
-              「*{student.name}」：studentDetail.student.nameをアスタリスクで省略している。-->
           <p th:if="${#fields.hasErrors('student.name')}" th:errors="*{student.name}"></p>
-          <!--Springのサーバーサイドバリデーション（@NotBlank など） と連動。
-              サーバー側のバリデーションでstudent.nameにエラーがある時だけ、バリデーションのメッセージを表示する。
-              「@NotBlank(message = "名前は必須です")」がここに表示される。-->
         </div>
       </td>
     </tr>
 
-    <!-- カナ名 行 -->
     <tr>
       <th>ふりがな</th>
       <td th:text="*{student.furigana}">ヤマダタロウ</td>
@@ -74,7 +68,6 @@
       </td>
     </tr>
 
-    <!-- ニックネーム 行 -->
     <tr>
       <th>ニックネーム</th>
       <td th:text="*{student.nickname}">タロー</td>
@@ -86,7 +79,6 @@
       </td>
     </tr>
 
-    <!-- メールアドレス 行 -->
     <tr>
       <th>メールアドレス</th>
       <td th:text="*{student.email}">taro@example.com</td>
@@ -101,7 +93,6 @@
       </td>
     </tr>
 
-    <!-- 地域 行 -->
     <tr>
       <th>地域</th>
       <td th:text="*{student.city}">東京</td>
@@ -116,7 +107,6 @@
       </td>
     </tr>
 
-    <!-- 年齢 行 -->
     <tr>
       <th>年齢</th>
       <td th:text="*{student.age}">20</td>
@@ -131,7 +121,6 @@
       </td>
     </tr>
 
-    <!-- 性別 行 -->
     <tr>
       <th>性別</th>
       <td th:text="*{student.gender}">男性</td>
@@ -151,7 +140,6 @@
       </td>
     </tr>
 
-    <!-- 備考 行 -->
     <tr>
       <th>備考</th>
       <td th:text="*{student.remark}">特になし</td>
@@ -163,7 +151,6 @@
       </td>
     </tr>
 
-    <!-- 受講生コース名 行 -->
     <tr>
       <th>受講生コース名</th>
       <td>
@@ -171,16 +158,11 @@
           th:text="*{studentCourse[__${stat.index}__].courseName}">〜〜コース</span>
       </td>
       <td>
-        <!--stat:タイムリーフの機能。Listだと数を数えてもらう（０始まりで数える）。studentCourseはStudentDetailがもつ要素のこと。 -->
         <div th:each="course, stat : *{studentCourse}">
-          <!-- ★ 必須：courseId を渡す hidden -->
           <input type="hidden"
                  th:field="*{studentCourse[__${stat.index}__].courseId}" />
           <input type="text" id="courseName"
                  th:field="*{studentCourse[__${stat.index}__].courseName}"/>
-          <!--studentCourseのcourseNameに設定するよ、ということ。-->
-          <!-- ↑StudentDetailの中のリスト/ ↑n番目 / ↑要素オブジェクトのcourseNameフィールド -->
-          <!--「th:id="studentCourse.__${stat.index}__.courseName}"」講義内ではこれを入れて、idを上書きしている。labelの方もこれを入れている。 -->
         </div>
       </td>
     </tr>
@@ -191,7 +173,6 @@
     <button type="submit">更新</button>
   </div>
 </form>
-<!-- 削除フォーム。フォームを別にすればよかったのよ。-->
 <form th:action="@{/deleteStudent}" th:object="${studentDetail}" method="post">
   <input type="hidden" th:field="*{student.studentId}"/>
   <button type="submit">受講生を削除</button>
