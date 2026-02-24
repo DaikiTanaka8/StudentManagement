@@ -10,28 +10,29 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@OpenAPIDefinition(info = @Info( //MEMO: OpenAPIDefinition→ドキュメントを自動生成するためにつけたもの。info→APIの基本情報。
-    title = "受講生管理システム", //MEMO: APIの名前。
-    description = "受講生（受講生情報、受講生コース情報）を管理するAPIです。", //MEMO: APIの説明。
+@OpenAPIDefinition(info = @Info(
+    title = "受講生管理システム",
+    description = "受講生（受講生情報、受講生コース情報、コース申込状況）を管理するAPIです。",
     version = "1.0.0",
-    termsOfService = "https://example.com/terms", //MEMO: 利用規約URL。
-    contact = @Contact( //MEMO: 担当者情報。
+    termsOfService = "https://example.com/terms",
+    contact = @Contact(
         name = "担当者の名前",
         url = "https://tantosya.com",
         email = "tantosya@example.com"
     ),
-    license = @License( //MEMO: ライセンス情報。このAPI（システム）をどういうルールで利用・公開していいか、を示すための利用許諾情報。
-        name = "MIT License", //MEMO: ライセンス名。（MIT, Apache 2.0 など）
-        url = "https://opensource.org/licenses/MIT" //MEMO: ライセンスの全文のリンク（公式URL）。
+    license = @License(
+        name = "MIT License",
+        url = "https://opensource.org/licenses/MIT"
     )
 ),
-    servers = { //MEMO: APIサーバー一覧。本番環境、テスト環境、ローカル環境などを記述できる。
+    servers = {
         @Server(url = "http://localhost:8080", description = "ローカル環境"),
         @Server(url = "https://api.example.com", description = "本番環境")
     },
-    tags = { //MEMO: タグの説明。カテゴリ分け。
+    tags = {
         @Tag(name = "Student", description = "受講生関連のAPI"),
-        @Tag(name = "StudentCourse", description = "受講生コース情報関連のAPI")
+        @Tag(name = "StudentCourse", description = "受講生コース情報関連のAPI"),
+        @Tag(name = "StudentCourseStatus", description = "コース申込状況関連のAPI")
     }
 )
 @MapperScan("raisetech.studentmanagement.repository")

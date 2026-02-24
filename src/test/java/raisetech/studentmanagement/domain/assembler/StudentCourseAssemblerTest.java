@@ -47,7 +47,6 @@ class StudentCourseAssemblerTest {
     assertThat(actual.get(0).getCourseStatus().getStatus()).isEqualTo("仮申込");
     assertThat(actual.get(1).getCourseStatus().getStatus()).isEqualTo("本申込");
     assertThat(actual.get(2).getCourseStatus().getStatus()).isEqualTo("受講中");
-
   }
 
   @Test
@@ -61,17 +60,5 @@ class StudentCourseAssemblerTest {
     List<StudentCourse> actual = sut.assembleCourseListWithStatus(List.of(studentCourse1),List.of(studentCourseStatus1));
 
     assertThat(actual.get(0).getCourseStatus()).isNull();
-
   }
-
-//  @Test
-//  void 空のリストでも動作すること() {
-//    // courseList=空, statusList=空
-//    // → 空のリストが返る
-//  }
-//
-//  @Test
-//  void 複数のコースに同じステータスが紐づくこと() {
-//    // 複数のcourseが同じcourseId（実際はありえないが念のため）
-//  }
 }

@@ -30,7 +30,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     // バリデーションライブラリ
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    // Thymeleaf　現在はあまり使われていない（から極めてほしいというわけではない）。タイプスクリプトとかリアクトとかJavaScriptがメジャー。
+    // Thymeleaf
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     // OpenAPI Generator

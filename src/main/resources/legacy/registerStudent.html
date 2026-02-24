@@ -1,34 +1,24 @@
+<!--
+【学習履歴】
+本ファイルは Thymeleaf による画面実装の学習時に作成したものです。
+現在のアプリケーションは REST API として運用しているため使用していません。
+-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
-<!--「xmlns:th="http://www.thymeleaf.org"」→thがタイムリーフ専用のタグ、必須のもの。
-     これを宣言しているから、「th:」で始まる属性はタイムリーフのものとして使える。-->
 <head>
   <meta charset="UTF-8">
   <title>受講生登録</title>
 </head>
 <body>
 <h1>受講生登録</h1>
-<!--TODO：actionの参照先やobjectの型が合っているか確認-->
 <form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
-<!--「th:action="@{/registerStudent}"」：アクションのURLは表示する時のものではなく、POSTメソッドのURL。
-    コントローラーの「@PostMapping("/registerStudent")」に飛ばしている。
-    「th:object="${studentDetail}"」：コントローラーの「public String registerStudent(StudentDetail studentDetail)」の引数。
-    フォームの中に入力欄を作っていく。。。？
-    「method="post"」：フォームというHTMLタグが元々持っている属性。-->
-  <div> <!--一つのまとまり、というもの。-->
-  <label for="name">名前</label> <!--ラベルの名前。nameですよ。studentDetailの要素と合わせなければならない。-->
+  <div>
+  <label for="name">名前</label>
     <input type="text" id="name" th:field="*{student.name}"
            required oninvalid="this.setCustomValidity('名前を入力してください')"
            oninput="this.setCustomValidity('')">
-    <!--「required oninvalid」入力が空でinvalidになった時メッセージを上書き-->
-    <!--「oninput="this.setCustomValidity('')"」入力されたらカスタムメッセージをクリアして通常状態を戻す。-->
-    <!--input：入力項目。テキスト入力する項目。
-        「th:field」：「${studentDetail}」に紐づくフィールド名はなんなのか。
-        「*{student.name}」：studentDetail.student.nameをアスタリスクで省略している。-->
     <p th:if="${#fields.hasErrors('student.name')}" th:errors="*{student.name}"></p>
-    <!--Springのサーバーサイドバリデーション（@NotBlank など） と連動。
-        サーバー側のバリデーションでstudent.nameにエラーがある時だけ、バリデーションのメッセージを表示する。
-        「@NotBlank(message = "名前は必須です")」がここに表示される。-->
   </div>
   <div>
     <label for="furigana">ふりがな</label>
@@ -79,17 +69,14 @@
     <input type="text" id="remark" th:field="*{student.remark}">
   </div>
 
-  <div th:each="course, stat : *{studentCourse}"> <!--stat:タイムリーフの機能。Listだと数を数えてもらう（０始まりで数える）。studentCourseはStudentDetailがもつ要素のこと。 -->
+  <div th:each="course, stat : *{studentCourse}">
     <label for="courseName">受講コース名</label>
     <input type="text" id="courseName"
-           th:field="*{studentCourse[__${stat.index}__].courseName}" /> <!--studentCourseのcourseNameに設定するよ、ということ。-->
-                  <!-- ↑StudentDetailの中のリスト/ ↑n番目 / ↑要素オブジェクトのcourseNameフィールド -->
-    <!--「th:id="studentCourse.__${stat.index}__.courseName}"」講義内ではこれを入れて、idを上書きしている。labelの方もこれを入れている。 -->
+           th:field="*{studentCourse[__${stat.index}__].courseName}" />
   </div>
 
   <div>
     <button type="submit">登録</button>
-    <!--登録するためのボタンを用意している。「type="submit"」：ボタンを押した瞬間、postとしてURLに対して処理が実行されるという動き。    -->
   </div>
 </form>
 </body>

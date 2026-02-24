@@ -39,7 +39,7 @@ class StudentControllerTest {
   private MockMvc mockMvc;
 
   @Autowired
-  private ObjectMapper objectMapper; //MEMO: JSONの文字列で変換する(自分で追加)
+  private ObjectMapper objectMapper;
 
   @MockBean
   private StudentService service;
@@ -48,8 +48,6 @@ class StudentControllerTest {
   private StudentRepository repository;
 
   private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-  //MEMO: Bean Validation（Jakarta Validation / Hibernate Validator）を使うための“バリデータ本体”を生成するコード。
-  // 「Javaのバリデーションを手動で実行できる Validator インスタンスを取得している」。Controller の @Valid の裏側で動いているやつを、自分で呼び出せるようにしている。
 
 
   @Test
@@ -60,8 +58,8 @@ class StudentControllerTest {
     StudentDetail studentDetail = new StudentDetail(student, List.of());
     when(service.searchStudentList()).thenReturn(List.of(studentDetail));
 
-    mockMvc.perform(get("/studentList")) //MEMO: テスト用の疑似HTTPクライアント（mockMvc）を使って、GET/studentListを実行。
-        .andExpect(status().isOk()) //MEMO: Controllerからの戻り値（HTTP ステータスコード）が 200 OK であることを確認。
+    mockMvc.perform(get("/studentList"))
+        .andExpect(status().isOk())
         .andExpect(content().json("""
                     [
                         {
@@ -128,10 +126,9 @@ class StudentControllerTest {
     student.setGender("その他");
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
-    //MEMO: studentに付けたバリデーションアノテーション（@NotNull, @Pattern, @Size など）が破られていないかチェックして、違反していた項目を全部返す。
 
-    Assertions.assertEquals(0, violations.size()); //MEMO: 「違反は発生しないよ」という期待をテストしている。
-    assertThat(violations.size()).isEqualTo(0); //MEMO: assertThatの方が直感的。
+    Assertions.assertEquals(0, violations.size());
+    assertThat(violations.size()).isEqualTo(0);
   }
 
   @Test
@@ -145,11 +142,10 @@ class StudentControllerTest {
     student.setGender("その他");
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
-    //MEMO: studentに付けたバリデーションアノテーション（@NotNull, @Pattern, @Size など）が破られていないかチェックして、違反していた項目を全部返す。
 
-    Assertions.assertEquals(1, violations.size()); //MEMO: 「違反は１つだけ発生する」という期待をテストしている。
-    assertThat(violations.size()).isEqualTo(1); //MEMO:「バリデーションエラーが 1 件だけ発生していること」を確認している。
-    assertThat(violations).extracting("message").containsOnly("正しいメールアドレスを入力してください"); //MEMO: 「どんなエラーメッセージが出ているか」を検証している。
+    Assertions.assertEquals(1, violations.size());
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message").containsOnly("正しいメールアドレスを入力してください");
 
   }
 
@@ -198,9 +194,9 @@ class StudentControllerTest {
   void 受講生検索のID検索で不正なID検索を実行したら500エラーが返ってくること() throws Exception {
     String studentId = "error-test-000000000000000000000000000000";
     mockMvc.perform(get("/student/{studentId}", studentId))
-        .andExpect(status().isInternalServerError()); //MEMO: URLが36文字以上だから、500エラーが返ってくる。
+        .andExpect(status().isInternalServerError());
 
-    verify(service, times(0)).searchStudentById(studentId); //MEMO: エラーだからリポジトリは呼び出されない。
+    verify(service, times(0)).searchStudentById(studentId);
 
   }
 
@@ -247,8 +243,6 @@ class StudentControllerTest {
 
   @Test
   void 受講生登録を実行したら登録した受講生詳細が返ってくること() throws Exception {
-    // 事前準備
-    // 送るデータ
     Student inputStudent = new Student();
     inputStudent.setStudentId("test-id-123");
     inputStudent.setName("登録テスト");
@@ -263,9 +257,8 @@ class StudentControllerTest {
 
     StudentDetail inputStudentDetail = new StudentDetail(inputStudent,List.of(course));
 
-    // 返ってくるデータ
     Student respenseStudent = new Student();
-    respenseStudent.setStudentId("test-id-123"); //MEMO: 自動生成されたID
+    respenseStudent.setStudentId("test-id-123");
     respenseStudent.setName("登録テスト");
     respenseStudent.setFurigana("とうろくてすと");
     respenseStudent.setEmail("test@example.com");
@@ -278,14 +271,11 @@ class StudentControllerTest {
 
     StudentDetail responseStudentDetail = new StudentDetail(respenseStudent,List.of(responseCourse));
 
-    // Mock設定
     when(service.registerStudent(any(StudentDetail.class))).thenReturn(responseStudentDetail);
-    //MEMO: any()を使うことで、「どんなStudentDetailでもOK」とする。
 
-    // 実行 & 検証
     mockMvc.perform(post("/registerStudent")
-        .contentType(MediaType.APPLICATION_JSON) //MEMO: Content-Typeを指定。
-        .content(objectMapper.writeValueAsString(inputStudentDetail))) //MEMO: JSONの文字列を指定。StudentDetailをStringにしてくれている。
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(inputStudentDetail)))
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(responseStudentDetail)));
 
@@ -295,12 +285,6 @@ class StudentControllerTest {
 
   @Test
   void 受講生登録を実行できて空で返ってくること() throws Exception {
-    // MEMO: 【講義にて紹介されたテスト】
-    // リクエストデータは適切に構築していて入力チェックの検証も兼ねている。
-    // 本来であれば帰りは登録されたデータが入るが、モック化すると意味がないため、レスポンスは作らない。
-
-    // 事前準備
-    // 送るデータ
     Student inputStudent = new Student();
     inputStudent.setStudentId("test-id-123");
     inputStudent.setName("登録テスト");
@@ -315,10 +299,9 @@ class StudentControllerTest {
 
     StudentDetail inputStudentDetail = new StudentDetail(inputStudent,List.of(course));
 
-    // 実行 & 検証
     mockMvc.perform(post("/registerStudent")
-            .contentType(MediaType.APPLICATION_JSON) //MEMO: Content-Typeを指定。
-            .content(objectMapper.writeValueAsString(inputStudentDetail))) //MEMO: JSONの文字列を指定。StudentDetailをStringにしてくれている。
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(inputStudentDetail)))
         .andExpect(status().isOk());
 
     verify(service, times(1)).registerStudent(any());
@@ -328,7 +311,6 @@ class StudentControllerTest {
 
   @Test
   void 受講生更新を実行したら更新成功メッセージが返ってくること() throws Exception {
-
     Student student = new Student();
     student.setName("更新テスト");
     student.setFurigana("こうしんてすと");
@@ -342,10 +324,9 @@ class StudentControllerTest {
 
     StudentDetail studentDetail = new StudentDetail(student,List.of(course));
 
-    // 実行 & 検証
     mockMvc.perform(put("/updateStudent")
-        .contentType(MediaType.APPLICATION_JSON) //MEMO: Content-Typeを指定。
-        .content(objectMapper.writeValueAsString(studentDetail))) //MEMO: JSONの文字列を指定。StudentDetailをStringにしてくれている。
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(studentDetail)))
         .andExpect(status().isOk())
         .andExpect(content().string("更新処理が成功しました。"));
 
@@ -355,7 +336,6 @@ class StudentControllerTest {
 
   @Test
   void 受講生更新で不正なメールアドレスを入力して実行したら400エラーが返ること() throws Exception {
-
     Student student = new Student();
     student.setName("更新テスト");
     student.setFurigana("こうしんてすと");
@@ -369,28 +349,24 @@ class StudentControllerTest {
 
     StudentDetail studentDetail = new StudentDetail(student,List.of(course));
 
-    // 実行 & 検証
     mockMvc.perform(put("/updateStudent")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(studentDetail)))
         .andExpect(status().isBadRequest());
 
     verify(service, times(0)).updateStudent(any(StudentDetail.class));
-
   }
 
   @Test
   void コース申込状況の更新を実行したら更新成功メッセージが返ってくること() throws Exception {
-
     StudentCourseStatus studentCourseStatus = new StudentCourseStatus();
     studentCourseStatus.setStatusId("test-id-123");
     studentCourseStatus.setCourseId("test-id-789");
     studentCourseStatus.setStatus("受講中");
 
-    // 実行 & 検証
     mockMvc.perform(put("/updateStudentCourseStatus")
-            .contentType(MediaType.APPLICATION_JSON) //MEMO: Content-Typeを指定。
-            .content(objectMapper.writeValueAsString(studentCourseStatus))) //MEMO: JSONの文字列を指定。StudentDetailをStringにしてくれている。
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(studentCourseStatus)))
         .andExpect(status().isOk())
         .andExpect(content().string("更新処理が成功しました。"));
 
@@ -403,15 +379,13 @@ class StudentControllerTest {
     Student student = new Student();
     student.setStudentId("12345");
 
-    // 実行 & 検証
     mockMvc.perform(delete("/student/12345")
-        .contentType(MediaType.APPLICATION_JSON) //MEMO: Content-Typeを指定。
-        .content(objectMapper.writeValueAsString(student))) //MEMO: JSONの文字列を指定。StudentDetailをStringにしてくれている。
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(student)))
         .andExpect(status().isOk())
         .andExpect(content().string("削除処理が成功しました。"));
 
     verify(service, times(1)).localDeleteStudent("12345");
-
   }
 
   @Test
@@ -429,7 +403,6 @@ class StudentControllerTest {
     assertThat(violations.size()).isEqualTo(1);
     assertThat(violations).extracting("message")
         .containsOnly("名前は必須です");
-
   }
 
   @Test
@@ -447,7 +420,6 @@ class StudentControllerTest {
     assertThat(violations.size()).isEqualTo(1);
     assertThat(violations).extracting("message")
         .containsOnly("ふりがなはひらがなで入力してください");
-
   }
 
   @Test
@@ -465,7 +437,6 @@ class StudentControllerTest {
     assertThat(violations.size()).isEqualTo(1);
     assertThat(violations).extracting("message")
         .containsOnly("地域は必須です");
-
   }
 
   @Test
@@ -483,7 +454,6 @@ class StudentControllerTest {
     assertThat(violations.size()).isEqualTo(1);
     assertThat(violations).extracting("message")
         .containsOnly("年齢は10歳以上で入力してください");
-
   }
 
 }
