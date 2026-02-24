@@ -12,7 +12,7 @@ import raisetech.studentmanagement.data.StudentCourse;
 import raisetech.studentmanagement.data.StudentCourseStatus;
 import raisetech.studentmanagement.domain.StudentSearchCondition;
 
-@MybatisTest // この記載のみで自動でロールバックされる。
+@MybatisTest
 class StudentRepositoryTest {
 
   @Autowired
@@ -57,7 +57,6 @@ class StudentRepositoryTest {
             expected.getAge(),
             expected.getGender()
         );
-
   }
 
   @Test
@@ -183,7 +182,6 @@ class StudentRepositoryTest {
 
     List<Student> actual = sut.searchStudent();
 
-    // 登録後studentsの数が1つ増えている(4->5)ということを確認する。
     assertThat(actual.size()).isEqualTo(5);
   }
 
@@ -200,7 +198,6 @@ class StudentRepositoryTest {
 
     List<StudentCourse> actual = sut.searchStudentCourseList();
 
-    // 登録後students_coursesの数が1つ増えている(10->11)ということを確認する。
     assertThat(actual.size()).isEqualTo(11);
   }
 
@@ -215,7 +212,6 @@ class StudentRepositoryTest {
 
     List<StudentCourseStatus> actual = sut.searchStudentCourseStatusList();
 
-    // 登録後students_courses_statusの数が1つ増えている(10->11)ということを確認する。
     assertThat(actual.size()).isEqualTo(11);
   }
 
@@ -271,7 +267,6 @@ class StudentRepositoryTest {
         .orElseThrow();
 
     assertThat(updateCourse.getCourseName()).isEqualTo(studentCourse.getCourseName());
-
   }
 
   @Test
@@ -284,7 +279,6 @@ class StudentRepositoryTest {
     StudentCourseStatus searchStudentCourseStatusById = sut.searchStudentCourseStatusById("101");
 
     assertThat(searchStudentCourseStatusById.getStatus()).isEqualTo("本申込");
-
   }
 
   @Test
@@ -296,5 +290,4 @@ class StudentRepositoryTest {
 
     assertThat(actual.size()).isEqualTo(3);
   }
-
 }
