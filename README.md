@@ -56,7 +56,10 @@ SpringBootを用いて開発し、AWS上にデプロイしています。
 **GET** `/student/{studentId}`
 
 ### 5. 絞り込み検索  
-**GET** `/students?fullName=&age=&gender=`
+**POST** `/studentList/search`
+
+### ６. 受講生削除（論理削除）  
+**DELETE** `/student/{studentId}`
 
 ---
 
